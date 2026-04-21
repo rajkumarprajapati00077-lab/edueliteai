@@ -1,12 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, MessageSquareCode, BookOpen, Target, ScrollText, Settings, Sparkles } from "lucide-react";
+import { LayoutDashboard, MessageSquareCode, CalendarDays, User as UserIcon, Settings, Sparkles } from "lucide-react";
 
 const items = [
   { to: "/dashboard", icon: LayoutDashboard, label: "Overview" },
   { to: "/chat", icon: MessageSquareCode, label: "AI Translator" },
-  { to: "/dashboard", icon: BookOpen, label: "Modules" },
-  { to: "/dashboard", icon: Target, label: "Targets" },
-  { to: "/dashboard", icon: ScrollText, label: "Answer Audits" },
+  { to: "/calendar", icon: CalendarDays, label: "Study Calendar" },
+  { to: "/profile", icon: UserIcon, label: "Profile" },
+  { to: "/settings", icon: Settings, label: "Settings" },
 ];
 
 export const DashboardSidebar = () => {
@@ -24,8 +24,8 @@ export const DashboardSidebar = () => {
 
       <div className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground px-2 mb-2">Workspace</div>
       <nav className="flex flex-col gap-1">
-        {items.map((it, idx) => {
-          const active = pathname === it.to && idx === 0;
+        {items.map((it) => {
+          const active = pathname === it.to;
           return (
             <Link
               key={it.label}
@@ -49,9 +49,6 @@ export const DashboardSidebar = () => {
           <p className="text-2xl font-bold text-gradient">14 days 🔥</p>
           <p className="text-xs text-muted-foreground mt-1">Don't break the chain.</p>
         </div>
-        <Link to="/" className="mt-3 flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/70">
-          <Settings className="h-4 w-4" /> Settings
-        </Link>
       </div>
     </aside>
   );

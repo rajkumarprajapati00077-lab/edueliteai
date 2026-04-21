@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import { Sparkles } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const links = [
   { to: "/", label: "Home" },
@@ -10,6 +11,8 @@ const links = [
 
 export const Navbar = () => {
   const { pathname } = useLocation();
+  const { user } = useAuth();
+  const cta = user ? { to: "/dashboard", label: "Open workspace" } : { to: "/auth", label: "Start Free Trial" };
   return (
     <motion.header
       initial={{ y: -40, opacity: 0 }}
@@ -44,10 +47,10 @@ export const Navbar = () => {
             ))}
           </ul>
           <Link
-            to="/dashboard"
+            to={cta.to}
             className="relative inline-flex items-center gap-2 rounded-xl bg-gradient-primary px-4 py-2 text-sm font-semibold text-primary-foreground glow-primary hover:scale-[1.03] active:scale-95 transition-transform"
           >
-            Start Free Trial
+            {cta.label}
           </Link>
         </nav>
       </div>
