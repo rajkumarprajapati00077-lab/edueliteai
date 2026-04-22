@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
 
-const TARGET = new Date("2027-01-15T09:00:00").getTime();
-
-export const CountdownRing = ({ progress = 42 }: { progress?: number }) => {
+export const CountdownRing = ({
+  progress = 42,
+  exam = "CA Final · Jan 2027",
+  attemptDate = null,
+}: { progress?: number; exam?: string; attemptDate?: string | null }) => {
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
     const t = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(t);
   }, []);
 
-  const diff = Math.max(0, TARGET - now);
+  const target = attemptDate ? new Date(attemptDate + "T09:00:00").getTime() : new Date("2027-01-15T09:00:00").getTime();
+  const diff = Math.max(0, target - now);
   const days = Math.floor(diff / 86400000);
   const hours = Math.floor((diff / 3600000) % 24);
   const mins = Math.floor((diff / 60000) % 60);
@@ -52,7 +55,7 @@ export const CountdownRing = ({ progress = 42 }: { progress?: number }) => {
       </div>
       <div>
         <p className="text-xs uppercase tracking-widest text-muted-foreground">Target attempt</p>
-        <p className="text-2xl font-bold mt-1">CA Final · Jan 2027</p>
+        <p className="font-display text-2xl font-bold mt-1">{exam}{attemptDate ? ` · ${new Date(attemptDate).toLocaleDateString(undefined, { month: "short", year: "numeric" })}` : ""}</p>
         <div className="mt-4 grid grid-cols-4 gap-2">
           {[
             { v: days, l: "Days" },

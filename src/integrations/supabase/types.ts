@@ -38,6 +38,33 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_goal_log: {
+        Row: {
+          created_at: string
+          id: string
+          log_date: string
+          minutes: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          log_date?: string
+          minutes?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          log_date?: string
+          minutes?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string
@@ -72,6 +99,87 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notes: {
+        Row: {
+          chapter: string
+          course: string
+          created_at: string
+          file_path: string | null
+          id: string
+          is_ai_generated: boolean
+          is_private: boolean
+          level: string
+          subject: string
+          title: string
+          updated_at: string
+          uploaded_by: string
+        }
+        Insert: {
+          chapter: string
+          course: string
+          created_at?: string
+          file_path?: string | null
+          id?: string
+          is_ai_generated?: boolean
+          is_private?: boolean
+          level?: string
+          subject: string
+          title: string
+          updated_at?: string
+          uploaded_by: string
+        }
+        Update: {
+          chapter?: string
+          course?: string
+          created_at?: string
+          file_path?: string | null
+          id?: string
+          is_ai_generated?: boolean
+          is_private?: boolean
+          level?: string
+          subject?: string
+          title?: string
+          updated_at?: string
+          uploaded_by?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          attempt_date: string | null
+          created_at: string
+          daily_minutes_goal: number
+          display_name: string | null
+          exam_track: string
+          id: string
+          theme: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          attempt_date?: string | null
+          created_at?: string
+          daily_minutes_goal?: number
+          display_name?: string | null
+          exam_track?: string
+          id?: string
+          theme?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          attempt_date?: string | null
+          created_at?: string
+          daily_minutes_goal?: number
+          display_name?: string | null
+          exam_track?: string
+          id?: string
+          theme?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       study_targets: {
         Row: {

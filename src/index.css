@@ -1,71 +1,166 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800&family=Space+Grotesk:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Aurum AI — Premium SaaS for CA / CS / CMA professional students.
-   Dark-first design system. All colors HSL. Stripe × OpenAI vibes. */
+/* EduElite — Premium AI study workspace for CA / CS / CMA students.
+   Multi-theme: premium-dark (default), minimal-modern, academic-editorial. */
 
 @layer base {
-  :root {
-    /* Obsidian base */
-    --background: 230 25% 5%;
+  /* PREMIUM DARK — deep navy + warm gold (default) */
+  :root, [data-theme="premium-dark"] {
+    --background: 224 38% 6%;
     --foreground: 210 40% 98%;
 
-    --card: 230 22% 8%;
+    --card: 224 30% 9%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 230 25% 7%;
+    --popover: 224 35% 8%;
     --popover-foreground: 210 40% 98%;
 
-    /* Electric blue primary */
-    --primary: 220 100% 62%;
-    --primary-foreground: 230 25% 5%;
-    --primary-glow: 220 100% 70%;
+    --primary: 41 95% 58%;            /* warm gold */
+    --primary-foreground: 224 40% 8%;
+    --primary-glow: 38 100% 68%;
 
-    /* Vibrant purple accent */
-    --accent: 270 95% 65%;
-    --accent-foreground: 0 0% 100%;
-    --accent-glow: 280 100% 72%;
+    --accent: 188 95% 55%;            /* electric teal */
+    --accent-foreground: 224 40% 8%;
+    --accent-glow: 188 100% 65%;
 
-    --secondary: 230 20% 12%;
+    --secondary: 224 25% 13%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 230 18% 14%;
-    --muted-foreground: 220 10% 65%;
+    --muted: 224 22% 14%;
+    --muted-foreground: 220 10% 68%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
     --success: 150 80% 50%;
 
-    --border: 230 20% 16%;
-    --input: 230 20% 14%;
-    --ring: 220 100% 62%;
+    --border: 224 22% 17%;
+    --input: 224 22% 14%;
+    --ring: 41 95% 58%;
 
     --radius: 1rem;
 
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(220 100% 62%), hsl(270 95% 65%));
-    --gradient-hero: radial-gradient(ellipse at 30% 20%, hsl(220 100% 62% / 0.25), transparent 60%),
-                     radial-gradient(ellipse at 80% 80%, hsl(270 95% 65% / 0.22), transparent 60%);
-    --gradient-card: linear-gradient(145deg, hsl(230 22% 10% / 0.8), hsl(230 22% 6% / 0.6));
-    --gradient-text: linear-gradient(135deg, hsl(220 100% 75%), hsl(270 95% 75%));
+    --gradient-primary: linear-gradient(135deg, hsl(41 95% 58%), hsl(28 95% 55%));
+    --gradient-accent: linear-gradient(135deg, hsl(188 95% 55%), hsl(220 90% 60%));
+    --gradient-hero: radial-gradient(ellipse at 25% 15%, hsl(41 95% 58% / 0.22), transparent 60%),
+                     radial-gradient(ellipse at 80% 85%, hsl(188 95% 55% / 0.18), transparent 60%);
+    --gradient-card: linear-gradient(145deg, hsl(224 30% 11% / 0.85), hsl(224 30% 7% / 0.65));
+    --gradient-text: linear-gradient(135deg, hsl(41 95% 70%), hsl(28 95% 65%));
 
-    /* Shadows / glow */
-    --shadow-glow: 0 0 60px hsl(220 100% 62% / 0.35);
-    --shadow-glow-purple: 0 0 60px hsl(270 95% 65% / 0.35);
-    --shadow-elevated: 0 30px 80px -20px hsl(220 100% 30% / 0.5);
+    --shadow-glow: 0 0 60px hsl(41 95% 58% / 0.35);
+    --shadow-glow-accent: 0 0 60px hsl(188 95% 55% / 0.3);
+    --shadow-elevated: 0 30px 80px -20px hsl(41 95% 30% / 0.5);
+    --shadow-3d: 0 1px 0 hsl(0 0% 100% / 0.08) inset, 0 -2px 0 hsl(0 0% 0% / 0.4) inset, 0 12px 24px -12px hsl(0 0% 0% / 0.6);
 
-    --sidebar-background: 230 25% 6%;
+    --font-display: 'Fraunces', 'Instrument Serif', Georgia, serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+
+    --sidebar-background: 224 35% 7%;
     --sidebar-foreground: 220 10% 75%;
-    --sidebar-primary: 220 100% 62%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 230 20% 12%;
+    --sidebar-primary: 41 95% 58%;
+    --sidebar-primary-foreground: 224 40% 8%;
+    --sidebar-accent: 224 25% 13%;
     --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 230 20% 14%;
-    --sidebar-ring: 220 100% 62%;
+    --sidebar-border: 224 22% 14%;
+    --sidebar-ring: 41 95% 58%;
+  }
+
+  /* MINIMAL MODERN — off-black + electric violet, geometric */
+  [data-theme="minimal-modern"] {
+    --background: 240 10% 4%;
+    --foreground: 0 0% 98%;
+    --card: 240 8% 8%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 8% 7%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 265 95% 65%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 270 100% 75%;
+    --accent: 200 100% 60%;
+    --accent-foreground: 0 0% 100%;
+    --accent-glow: 200 100% 70%;
+    --secondary: 240 8% 13%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 8% 14%;
+    --muted-foreground: 240 5% 65%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --success: 150 70% 50%;
+    --border: 240 8% 16%;
+    --input: 240 8% 14%;
+    --ring: 265 95% 65%;
+    --radius: 0.75rem;
+    --gradient-primary: linear-gradient(135deg, hsl(265 95% 65%), hsl(290 95% 65%));
+    --gradient-accent: linear-gradient(135deg, hsl(200 100% 60%), hsl(265 95% 65%));
+    --gradient-hero: radial-gradient(ellipse at 30% 20%, hsl(265 95% 65% / 0.2), transparent 60%),
+                     radial-gradient(ellipse at 80% 80%, hsl(200 100% 60% / 0.18), transparent 60%);
+    --gradient-card: linear-gradient(145deg, hsl(240 8% 10% / 0.85), hsl(240 8% 5% / 0.65));
+    --gradient-text: linear-gradient(135deg, hsl(265 95% 80%), hsl(200 100% 75%));
+    --shadow-glow: 0 0 60px hsl(265 95% 65% / 0.35);
+    --shadow-glow-accent: 0 0 60px hsl(200 100% 60% / 0.3);
+    --shadow-elevated: 0 30px 80px -20px hsl(265 95% 30% / 0.5);
+    --shadow-3d: 0 1px 0 hsl(0 0% 100% / 0.06) inset, 0 -2px 0 hsl(0 0% 0% / 0.5) inset, 0 12px 24px -12px hsl(0 0% 0% / 0.7);
+    --font-display: 'Space Grotesk', 'Inter', sans-serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --sidebar-background: 240 10% 5%;
+    --sidebar-foreground: 240 5% 75%;
+    --sidebar-primary: 265 95% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 8% 13%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 240 8% 14%;
+    --sidebar-ring: 265 95% 65%;
+  }
+
+  /* ACADEMIC EDITORIAL — light cream + ink + emerald */
+  [data-theme="academic-editorial"] {
+    --background: 38 30% 96%;
+    --foreground: 220 30% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 30% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 30% 12%;
+    --primary: 156 60% 28%;          /* deep emerald */
+    --primary-foreground: 38 30% 96%;
+    --primary-glow: 156 65% 40%;
+    --accent: 28 80% 50%;             /* burnt amber */
+    --accent-foreground: 38 30% 96%;
+    --accent-glow: 28 85% 60%;
+    --secondary: 38 20% 90%;
+    --secondary-foreground: 220 30% 12%;
+    --muted: 38 20% 92%;
+    --muted-foreground: 220 15% 40%;
+    --destructive: 0 75% 45%;
+    --destructive-foreground: 38 30% 96%;
+    --success: 156 60% 35%;
+    --border: 38 20% 85%;
+    --input: 38 20% 92%;
+    --ring: 156 60% 28%;
+    --radius: 0.5rem;
+    --gradient-primary: linear-gradient(135deg, hsl(156 60% 28%), hsl(170 60% 32%));
+    --gradient-accent: linear-gradient(135deg, hsl(28 80% 50%), hsl(15 80% 55%));
+    --gradient-hero: radial-gradient(ellipse at 25% 15%, hsl(156 60% 28% / 0.12), transparent 60%),
+                     radial-gradient(ellipse at 80% 85%, hsl(28 80% 50% / 0.1), transparent 60%);
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100% / 0.95), hsl(38 20% 96% / 0.85));
+    --gradient-text: linear-gradient(135deg, hsl(156 60% 28%), hsl(28 80% 45%));
+    --shadow-glow: 0 0 40px hsl(156 60% 28% / 0.18);
+    --shadow-glow-accent: 0 0 40px hsl(28 80% 50% / 0.18);
+    --shadow-elevated: 0 20px 50px -16px hsl(220 30% 30% / 0.18);
+    --shadow-3d: 0 1px 0 hsl(0 0% 100% / 0.7) inset, 0 -2px 0 hsl(220 30% 12% / 0.08) inset, 0 8px 18px -8px hsl(220 30% 12% / 0.18);
+    --font-display: 'Instrument Serif', 'Fraunces', Georgia, serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --sidebar-background: 38 25% 94%;
+    --sidebar-foreground: 220 25% 25%;
+    --sidebar-primary: 156 60% 28%;
+    --sidebar-primary-foreground: 38 30% 96%;
+    --sidebar-accent: 38 20% 88%;
+    --sidebar-accent-foreground: 220 30% 12%;
+    --sidebar-border: 38 20% 85%;
+    --sidebar-ring: 156 60% 28%;
   }
 }
 
@@ -75,15 +170,19 @@
   }
   html {
     @apply scroll-smooth;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: var(--font-body);
   }
   body {
     @apply bg-background text-foreground antialiased;
-    font-feature-settings: 'cv11', 'ss01', 'ss03';
+    font-feature-settings: 'cv11', 'ss01', 'ss03', 'ss07';
     background-image:
-      radial-gradient(ellipse at top, hsl(220 100% 62% / 0.08), transparent 50%),
-      radial-gradient(ellipse at bottom, hsl(270 95% 65% / 0.06), transparent 50%);
+      radial-gradient(ellipse at top, hsl(var(--primary) / 0.08), transparent 50%),
+      radial-gradient(ellipse at bottom, hsl(var(--accent) / 0.06), transparent 50%);
     background-attachment: fixed;
+  }
+  h1, h2, h3, .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
   }
 }
 
@@ -94,6 +193,14 @@
   .glass-strong {
     @apply backdrop-blur-2xl bg-card/70 border border-white/10;
   }
+  [data-theme="academic-editorial"] .glass {
+    @apply bg-card/80 border-border;
+    backdrop-filter: blur(8px);
+  }
+  [data-theme="academic-editorial"] .glass-strong {
+    @apply bg-card/95 border-border;
+    backdrop-filter: blur(8px);
+  }
   .text-gradient {
     background: var(--gradient-text);
     -webkit-background-clip: text;
@@ -101,17 +208,34 @@
     color: transparent;
   }
   .glow-primary { box-shadow: var(--shadow-glow); }
-  .glow-purple { box-shadow: var(--shadow-glow-purple); }
+  .glow-accent { box-shadow: var(--shadow-glow-accent); }
+  .shadow-3d { box-shadow: var(--shadow-3d); }
+  .btn-3d {
+    box-shadow: var(--shadow-3d);
+    transition: transform 180ms cubic-bezier(.2,.8,.2,1), box-shadow 180ms;
+  }
+  .btn-3d:hover { transform: translateY(-2px); }
+  .btn-3d:active { transform: translateY(0); box-shadow: 0 1px 0 hsl(0 0% 0% / 0.2) inset; }
 }
 
 @layer utilities {
   .bg-gradient-primary { background: var(--gradient-primary); }
+  .bg-gradient-accent { background: var(--gradient-accent); }
   .bg-gradient-hero { background: var(--gradient-hero); }
   .bg-gradient-card { background: var(--gradient-card); }
+  .font-display { font-family: var(--font-display); }
   .grid-bg {
     background-image:
-      linear-gradient(hsl(220 100% 62% / 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, hsl(220 100% 62% / 0.05) 1px, transparent 1px);
+      linear-gradient(hsl(var(--primary) / 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--primary) / 0.05) 1px, transparent 1px);
     background-size: 40px 40px;
+  }
+  .animate-aurora {
+    background-size: 200% 200%;
+    animation: aurora 18s ease infinite;
+  }
+  @keyframes aurora {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
   }
 }

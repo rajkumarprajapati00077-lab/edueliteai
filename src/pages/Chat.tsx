@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Languages, Send, Sparkles, User, ArrowLeft, Plus, MessageSquare } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { Link } from "react-router-dom";
 import { PageTransition } from "@/components/PageTransition";
 import { supabase } from "@/integrations/supabase/client";
@@ -183,8 +185,8 @@ const Chat = () => {
                   <Languages className="h-4 w-4 text-primary-foreground" />
                 </div>
                 <div className="leading-tight">
-                  <p className="font-semibold text-sm">Bilingual Translator</p>
-                  <p className="text-[10px] text-muted-foreground">Hindi prompt → ICAI-grade English answer</p>
+                  <p className="font-display font-semibold text-sm">EduElite AI Tutor</p>
+                  <p className="text-[10px] text-muted-foreground">Hindi or English in · exam-grade English out</p>
                 </div>
               </div>
               <button onClick={() => setBilingual((b) => !b)} className="flex items-center gap-2 glass rounded-full pl-3 pr-1 py-1 text-xs" aria-pressed={bilingual}>
@@ -214,10 +216,14 @@ const Chat = () => {
                     <div className={`h-8 w-8 shrink-0 rounded-lg grid place-items-center ${m.role === "user" ? "bg-secondary" : "bg-gradient-primary glow-primary"}`}>
                       {m.role === "user" ? <User className="h-4 w-4 text-foreground" /> : <Sparkles className="h-4 w-4 text-primary-foreground" />}
                     </div>
-                    <div className={`max-w-[78%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${m.role === "user" ? "bg-gradient-primary text-primary-foreground rounded-tr-sm" : "glass-strong rounded-tl-sm"}`}>
-                      {m.role === "assistant" && <p className="text-[10px] uppercase tracking-widest text-accent mb-1">AI Response · ICAI tone</p>}
-                      {m.role === "user" && <p className="text-[10px] uppercase tracking-widest text-primary-foreground/70 mb-1">User Prompt</p>}
-                      {m.content}
+                    <div className={`max-w-[78%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${m.role === "user" ? "bg-gradient-primary text-primary-foreground rounded-tr-sm whitespace-pre-wrap" : "glass-strong rounded-tl-sm"}`}>
+                      {m.role === "assistant" && <p className="text-[10px] uppercase tracking-widest text-accent mb-1">EduElite Tutor · ICAI tone</p>}
+                      {m.role === "user" && <p className="text-[10px] uppercase tracking-widest text-primary-foreground/70 mb-1">You</p>}
+                      {m.role === "assistant" ? (
+                        <div className="prose prose-sm prose-invert max-w-none prose-headings:font-display prose-headings:mt-3 prose-headings:mb-1 prose-p:my-1.5 prose-li:my-0.5 prose-strong:text-foreground">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
+                        </div>
+                      ) : m.content}
                     </div>
                   </motion.div>
                 ))}
