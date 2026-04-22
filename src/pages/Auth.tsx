@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Sparkles, Mail, Lock, ArrowRight } from "lucide-react";
+import { Mail, Lock, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { PageTransition } from "@/components/PageTransition";
+import { LogoMark } from "@/components/Logo";
 import { toast } from "sonner";
 
 const Auth = () => {
@@ -57,23 +58,21 @@ const Auth = () => {
           animate={{ opacity: 1, y: 0 }}
           className="relative w-full max-w-md glass-strong rounded-3xl p-8"
         >
-          <Link to="/" className="flex items-center gap-2 mb-6">
-            <div className="h-9 w-9 rounded-lg bg-gradient-primary grid place-items-center glow-primary">
-              <Sparkles className="h-4 w-4 text-primary-foreground" />
-            </div>
-            <span className="font-bold tracking-tight text-lg">Aurum<span className="text-gradient">AI</span></span>
+          <Link to="/" className="flex items-center gap-2.5 mb-6">
+            <LogoMark size={36} />
+            <span className="font-display font-bold tracking-tight text-xl">Edu<span className="text-gradient">Elite</span></span>
           </Link>
-          <h1 className="text-2xl font-bold tracking-tight">
+          <h1 className="font-display text-2xl font-bold tracking-tight">
             {mode === "signin" ? "Welcome back" : "Create your account"}
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            {mode === "signin" ? "Sign in to your study workspace." : "Start your CA / CS / CMA prep with Aurum AI."}
+            {mode === "signin" ? "Sign in to your study workspace." : "Start your CA / CS / CMA prep with EduElite."}
           </p>
 
           <button
             onClick={google}
             disabled={busy}
-            className="mt-6 w-full glass rounded-xl py-2.5 text-sm font-medium hover:bg-secondary/60 transition-colors disabled:opacity-50"
+            className="btn-3d mt-6 w-full glass rounded-xl py-2.5 text-sm font-medium disabled:opacity-50"
           >
             Continue with Google
           </button>
@@ -105,7 +104,7 @@ const Auth = () => {
             </label>
             <button
               type="submit" disabled={busy}
-              className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-primary py-2.5 font-semibold text-primary-foreground glow-primary hover:scale-[1.01] active:scale-95 transition-transform disabled:opacity-50"
+              className="btn-3d w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-primary py-2.5 font-semibold text-primary-foreground glow-primary disabled:opacity-50"
             >
               {busy ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
               <ArrowRight className="h-4 w-4" />
@@ -113,7 +112,7 @@ const Auth = () => {
           </form>
 
           <p className="mt-5 text-center text-xs text-muted-foreground">
-            {mode === "signin" ? "New to Aurum AI? " : "Already have an account? "}
+            {mode === "signin" ? "New to EduElite? " : "Already have an account? "}
             <button onClick={() => setMode(mode === "signin" ? "signup" : "signin")} className="text-primary hover:underline">
               {mode === "signin" ? "Create one" : "Sign in"}
             </button>
