@@ -1,12 +1,13 @@
 import { motion } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
-import { Sparkles } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { Logo } from "@/components/Logo";
 
 const links = [
   { to: "/", label: "Home" },
   { to: "/dashboard", label: "Dashboard" },
-  { to: "/chat", label: "AI Translator" },
+  { to: "/chat", label: "AI Tutor" },
+  { to: "/notes", label: "Notes" },
 ];
 
 export const Navbar = () => {
@@ -22,14 +23,7 @@ export const Navbar = () => {
     >
       <div className="mx-auto mt-4 max-w-6xl px-4">
         <nav className="glass-strong rounded-2xl px-5 py-3 flex items-center justify-between shadow-elevated">
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="h-8 w-8 rounded-lg bg-gradient-primary grid place-items-center glow-primary">
-              <Sparkles className="h-4 w-4 text-primary-foreground" />
-            </div>
-            <span className="font-bold tracking-tight text-lg">
-              Aurum<span className="text-gradient">AI</span>
-            </span>
-          </Link>
+          <Logo />
           <ul className="hidden md:flex items-center gap-1">
             {links.map((l) => (
               <li key={l.to}>
@@ -48,7 +42,7 @@ export const Navbar = () => {
           </ul>
           <Link
             to={cta.to}
-            className="relative inline-flex items-center gap-2 rounded-xl bg-gradient-primary px-4 py-2 text-sm font-semibold text-primary-foreground glow-primary hover:scale-[1.03] active:scale-95 transition-transform"
+            className="btn-3d inline-flex items-center gap-2 rounded-xl bg-gradient-primary px-4 py-2 text-sm font-semibold text-primary-foreground glow-primary"
           >
             {cta.label}
           </Link>
