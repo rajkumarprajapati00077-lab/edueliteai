@@ -13,7 +13,7 @@ const links = [
 export const Navbar = () => {
   const { pathname } = useLocation();
   const { user } = useAuth();
-  const cta = user ? { to: "/dashboard", label: "Open workspace" } : { to: "/auth", label: "Start Free Trial" };
+  const cta = user ? { to: "/dashboard", label: "Open workspace" } : { to: "/auth", label: "Sign in" };
   return (
     <motion.header
       initial={{ y: -40, opacity: 0 }}

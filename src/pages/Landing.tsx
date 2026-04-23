@@ -4,6 +4,9 @@ import { Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { HeroVisual } from "@/components/HeroVisual";
 import { PageTransition } from "@/components/PageTransition";
+import { FloatingProfileButton } from "@/components/FloatingProfileButton";
+import { PrivacyNotice } from "@/components/PrivacyNotice";
+import { useAuth } from "@/contexts/AuthContext";
 
 const features = [
   {
@@ -30,9 +33,11 @@ const features = [
 ];
 
 const Landing = () => {
+  const { user } = useAuth();
   return (
     <PageTransition>
       <div className="min-h-screen overflow-hidden">
+        <FloatingProfileButton />
         <Navbar />
 
         {/* HERO */}
@@ -63,10 +68,10 @@ const Landing = () => {
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link
-                  to="/dashboard"
+                  to={user ? "/dashboard" : "/auth"}
                   className="btn-3d inline-flex items-center gap-2 rounded-xl bg-gradient-primary px-6 py-3 font-semibold text-primary-foreground glow-primary"
                 >
-                  Start Free Trial <ArrowRight className="h-4 w-4" />
+                  {user ? "Open my workspace" : "Get started"} <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
                   to="/chat"
@@ -77,8 +82,8 @@ const Landing = () => {
               </div>
               <div className="mt-10 flex items-center gap-6 text-xs text-muted-foreground">
                 <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-success" /> ICAI aligned</span>
-                <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-success" /> 14-day trial</span>
-                <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-success" /> No card needed</span>
+                <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-success" /> Live ICSI &amp; ICMAI updates</span>
+                <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-success" /> Private to your account</span>
               </div>
             </motion.div>
             <div className="hidden md:block h-[420px]" />
@@ -129,6 +134,10 @@ const Landing = () => {
                 </motion.div>
               ))}
             </div>
+
+            <div className="mt-10 max-w-3xl mx-auto">
+              <PrivacyNotice />
+            </div>
           </div>
         </section>
 
@@ -145,7 +154,7 @@ const Landing = () => {
                   Join 12,400+ CA, CS and CMA students already studying with EduElite.
                 </p>
                 <Link
-                  to="/dashboard"
+                  to={user ? "/dashboard" : "/auth"}
                   className="btn-3d mt-8 inline-flex items-center gap-2 rounded-xl bg-gradient-primary px-7 py-3 font-semibold text-primary-foreground glow-primary"
                 >
                   Open my workspace <ArrowRight className="h-4 w-4" />

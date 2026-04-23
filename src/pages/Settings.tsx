@@ -1,13 +1,16 @@
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { PageTransition } from "@/components/PageTransition";
-import { Target, Palette, Timer, Check } from "lucide-react";
+import { Target, Palette, Timer, Check, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { useProfile } from "@/hooks/useProfile";
 import { useTheme, THEMES, ThemeName } from "@/contexts/ThemeContext";
+import { useExamInfo } from "@/hooks/useExamInfo";
+import { PrivacyNotice } from "@/components/PrivacyNotice";
 
 const Settings = () => {
   const { profile, update, loading } = useProfile();
   const { theme, setTheme } = useTheme();
+  const live = useExamInfo(profile?.exam_track);
 
   if (loading || !profile) {
     return (
@@ -32,7 +35,7 @@ const Settings = () => {
         <DashboardSidebar />
         <main className="flex-1 px-6 lg:px-10 py-8 max-w-3xl mx-auto w-full">
           <h1 className="font-display text-3xl font-bold tracking-tight">Settings</h1>
-          <p className="text-sm text-muted-foreground mt-1">Tune EduElite to your study style.</p>
+          <p className="text-sm text-muted-foreground mt-1">Tune EduElite to your study style. Account &amp; sign-in details live on the <a href="/profile" className="underline">Profile</a> page.</p>
 
           <section className="mt-8 glass-strong rounded-2xl p-6 space-y-5 shadow-3d">
             <h2 className="font-semibold flex items-center gap-2"><Target className="h-4 w-4 text-primary" /> Exam target</h2>
@@ -58,6 +61,11 @@ const Settings = () => {
                 />
               </label>
             </div>
+            {live.data?.next_attempt_label && (
+              <p className="text-[11px] text-muted-foreground">
+                Live from {live.data.source}: next attempt looks like <span className="text-foreground font-medium">{live.data.next_attempt_label}</span>{live.data.next_attempt_iso && ` (${live.data.next_attempt_iso})`}. Leave the field blank to use this automatically.
+              </p>
+            )}
           </section>
 
           <section className="mt-5 glass-strong rounded-2xl p-6 space-y-4 shadow-3d">
@@ -85,6 +93,10 @@ const Settings = () => {
                 </button>
               ))}
             </div>
+          </section>
+
+          <section className="mt-5">
+            <PrivacyNotice />
           </section>
         </main>
       </div>
