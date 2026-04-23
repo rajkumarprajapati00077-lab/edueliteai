@@ -1,3 +1,6 @@
 project_id = "kytoqxnxjkpmfvkpaddf"
 [functions.chat]
 verify_jwt = false
+
+[functions.exam-info]
+verify_jwt = false
