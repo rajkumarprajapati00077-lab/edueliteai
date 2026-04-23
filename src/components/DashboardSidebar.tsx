@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, MessageSquareCode, CalendarDays, User as UserIcon, Settings, FileText } from "lucide-react";
+import { LayoutDashboard, MessageSquareCode, CalendarDays, User as UserIcon, Settings, FileText, Library } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { useStreak } from "@/hooks/useStreak";
 
@@ -8,6 +8,7 @@ const items = [
   { to: "/chat", icon: MessageSquareCode, label: "AI Tutor" },
   { to: "/calendar", icon: CalendarDays, label: "Study Calendar" },
   { to: "/notes", icon: FileText, label: "Notes Library" },
+  { to: "/syllabus", icon: Library, label: "Syllabus Sheets" },
   { to: "/profile", icon: UserIcon, label: "Profile" },
   { to: "/settings", icon: Settings, label: "Settings" },
 ];
