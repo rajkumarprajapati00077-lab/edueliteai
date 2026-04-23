@@ -11,7 +11,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { format, subDays } from "date-fns";
 import { toast } from "sonner";
 import { ExamNewsCard } from "@/components/ExamNewsCard";
-import { PrivacyNotice } from "@/components/PrivacyNotice";
 import { useExamInfo } from "@/hooks/useExamInfo";
 
 type Target = { id: string; topic: string; module: string; done: boolean; target_date: string };
@@ -224,11 +223,8 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-5 mt-5">
-            <div className="lg:col-span-2">
-              <ExamNewsCard exam={exam} />
-            </div>
-            <PrivacyNotice />
+          <div className="mt-5">
+            <ExamNewsCard exam={exam} />
           </div>
         </main>
       </div>
