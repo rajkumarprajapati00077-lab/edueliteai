@@ -134,10 +134,6 @@ const Landing = () => {
                 </motion.div>
               ))}
             </div>
-
-            <div className="mt-10 max-w-3xl mx-auto">
-              <PrivacyNotice />
-            </div>
           </div>
         </section>
 
@@ -162,7 +158,14 @@ const Landing = () => {
               </div>
             </div>
           </div>
-          <footer className="mt-16 text-center text-xs text-muted-foreground pb-10">
+        </section>
+
+        {/* PRIVACY — single source of truth, lives only at the very bottom of the opening screen */}
+        <section className="relative pb-20">
+          <div className="mx-auto max-w-4xl px-6">
+            <PrivacyNotice />
+          </div>
+          <footer className="mt-12 text-center text-xs text-muted-foreground pb-10">
             © 2026 EduElite · Made for India's professional students.
           </footer>
         </section>
