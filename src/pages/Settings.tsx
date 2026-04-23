@@ -1,11 +1,14 @@
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { PageTransition } from "@/components/PageTransition";
-import { Target, Palette, Timer, Check, ShieldCheck } from "lucide-react";
+import { Target, Palette, Timer, Check, CalendarIcon, Wand2 } from "lucide-react";
 import { toast } from "sonner";
 import { useProfile } from "@/hooks/useProfile";
 import { useTheme, THEMES, ThemeName } from "@/contexts/ThemeContext";
 import { useExamInfo } from "@/hooks/useExamInfo";
-import { PrivacyNotice } from "@/components/PrivacyNotice";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format, parseISO } from "date-fns";
+import { cn } from "@/lib/utils";
 
 const Settings = () => {
   const { profile, update, loading } = useProfile();
@@ -28,6 +31,17 @@ const Settings = () => {
   };
 
   const pickTheme = (t: ThemeName) => { setTheme(t); save({ theme: t }); };
+
+  const isAuto = !profile.attempt_date;
+  const liveIso = live.data?.next_attempt_iso ?? null;
+  const effectiveIso = profile.attempt_date || liveIso;
+  const effectiveDate = effectiveIso ? parseISO(effectiveIso) : undefined;
+
+  const useAuto = () => save({ attempt_date: null });
+  const pickDate = (d: Date | undefined) => {
+    if (!d) return;
+    save({ attempt_date: format(d, "yyyy-MM-dd") });
+  };
 
   return (
     <PageTransition>
@@ -52,18 +66,56 @@ const Settings = () => {
                   ))}
                 </select>
               </label>
-              <label className="block">
-                <span className="text-xs text-muted-foreground">Attempt date</span>
-                <input
-                  type="date" value={profile.attempt_date ?? ""}
-                  onChange={(e) => save({ attempt_date: e.target.value })}
-                  className="mt-1 w-full glass rounded-xl px-3 py-2.5 text-sm bg-transparent outline-none"
-                />
-              </label>
+              <div className="block">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">Attempt date</span>
+                  <span className={cn(
+                    "text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full",
+                    isAuto ? "bg-primary/15 text-primary" : "bg-accent/15 text-accent"
+                  )}>
+                    {isAuto ? "Auto-set" : "Manual"}
+                  </span>
+                </div>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      className={cn(
+                        "btn-3d mt-1 w-full glass rounded-xl px-3 py-2.5 text-sm bg-transparent outline-none flex items-center gap-2 text-left",
+                        !effectiveDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="h-4 w-4 opacity-70" />
+                      {effectiveDate ? format(effectiveDate, "PPP") : "Pick a date"}
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={effectiveDate}
+                      onSelect={pickDate}
+                      disabled={(d) => d < new Date(new Date().setHours(0,0,0,0))}
+                      initialFocus
+                      className={cn("p-3 pointer-events-auto")}
+                    />
+                  </PopoverContent>
+                </Popover>
+                {!isAuto && (
+                  <button
+                    type="button"
+                    onClick={useAuto}
+                    className="mt-2 inline-flex items-center gap-1 text-[11px] text-primary hover:underline"
+                  >
+                    <Wand2 className="h-3 w-3" /> Reset to auto-detected date
+                  </button>
+                )}
+              </div>
             </div>
             {live.data?.next_attempt_label && (
               <p className="text-[11px] text-muted-foreground">
-                Live from {live.data.source}: next attempt looks like <span className="text-foreground font-medium">{live.data.next_attempt_label}</span>{live.data.next_attempt_iso && ` (${live.data.next_attempt_iso})`}. Leave the field blank to use this automatically.
+                Auto from {live.data.source}: next attempt looks like <span className="text-foreground font-medium">{live.data.next_attempt_label}</span>
+                {live.data.next_attempt_iso && ` (${live.data.next_attempt_iso})`}.
+                {isAuto ? " This is currently being used on your dashboard." : " Pick a date to override, or reset to auto."}
               </p>
             )}
           </section>
@@ -93,10 +145,6 @@ const Settings = () => {
                 </button>
               ))}
             </div>
-          </section>
-
-          <section className="mt-5">
-            <PrivacyNotice />
           </section>
         </main>
       </div>
