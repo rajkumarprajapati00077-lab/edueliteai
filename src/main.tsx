@@ -10,7 +10,10 @@ const isPreview =
 if (isPreview || isInIframe) {
   navigator.serviceWorker?.getRegistrations().then((rs) => rs.forEach((r) => r.unregister()));
 } else {
-  import("virtual:pwa-register").then(({ registerSW }) => registerSW({ immediate: true })).catch(() => {});
+  // Dynamically resolve the virtual PWA module so TS doesn't need a hard type for it.
+  (import(/* @vite-ignore */ "virtual:pwa-register") as Promise<{ registerSW: (o?: unknown) => void }>)
+    .then(({ registerSW }) => registerSW({ immediate: true }))
+    .catch(() => {});
 }
 
 createRoot(document.getElementById("root")!).render(<App />);
