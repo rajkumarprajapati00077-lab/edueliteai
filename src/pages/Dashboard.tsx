@@ -10,6 +10,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { format, subDays } from "date-fns";
 import { toast } from "sonner";
+import { ExamNewsCard } from "@/components/ExamNewsCard";
+import { PrivacyNotice } from "@/components/PrivacyNotice";
+import { useExamInfo } from "@/hooks/useExamInfo";
 
 type Target = { id: string; topic: string; module: string; done: boolean; target_date: string };
 
@@ -17,6 +20,8 @@ const Dashboard = () => {
   const { user } = useAuth();
   const { profile } = useProfile();
   const streak = useStreak();
+  const exam = profile?.exam_track ?? "CA Final";
+  const live = useExamInfo(exam);
   const [targets, setTargets] = useState<Target[]>([]);
   const [week, setWeek] = useState<{ d: string; minutes: number }[]>([]);
   const [todayMinutes, setTodayMinutes] = useState(0);
@@ -72,8 +77,11 @@ const Dashboard = () => {
 
   const goal = profile?.daily_minutes_goal ?? 120;
   const goalPct = Math.min(100, Math.round((todayMinutes / goal) * 100));
-  const exam = profile?.exam_track ?? "CA Final";
-  const attempt = profile?.attempt_date ? new Date(profile.attempt_date).getTime() : new Date("2027-01-15").getTime();
+  // Prefer the user's own attempt_date; fall back to live institute data; finally a sensible default.
+  const attemptIso = profile?.attempt_date || live.data?.next_attempt_iso || null;
+  const attempt = attemptIso
+    ? new Date(attemptIso + (attemptIso.length === 10 ? "T09:00:00" : "")).getTime()
+    : new Date("2027-01-15").getTime();
   const daysLeft = Math.max(0, Math.ceil((attempt - Date.now()) / 86400000));
   const syllabusPct = Math.min(99, 100 - Math.round((daysLeft / 365) * 100));
   const maxMin = Math.max(60, ...week.map((w) => w.minutes));
@@ -102,7 +110,12 @@ const Dashboard = () => {
               animate={{ opacity: 1, y: 0 }}
               className="lg:col-span-2 glass-strong rounded-2xl p-6 shadow-3d"
             >
-              <CountdownRing progress={syllabusPct} exam={exam} attemptDate={profile?.attempt_date ?? null} />
+              <CountdownRing progress={syllabusPct} exam={exam} attemptDate={attemptIso} />
+              {!profile?.attempt_date && live.data?.next_attempt_label && (
+                <p className="mt-3 text-[11px] text-muted-foreground">
+                  Auto-detected from {live.data.source}: <span className="text-foreground font-medium">{live.data.next_attempt_label}</span>. Set your own date in Settings to override.
+                </p>
+              )}
             </motion.div>
 
             <motion.div
@@ -209,6 +222,13 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
+          </div>
+
+          <div className="grid lg:grid-cols-3 gap-5 mt-5">
+            <div className="lg:col-span-2">
+              <ExamNewsCard exam={exam} />
+            </div>
+            <PrivacyNotice />
           </div>
         </main>
       </div>
