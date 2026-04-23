@@ -10,8 +10,9 @@ const isPreview =
 if (isPreview || isInIframe) {
   navigator.serviceWorker?.getRegistrations().then((rs) => rs.forEach((r) => r.unregister()));
 } else {
-  // Dynamically resolve the virtual PWA module so TS doesn't need a hard type for it.
-  (import(/* @vite-ignore */ "virtual:pwa-register") as Promise<{ registerSW: (o?: unknown) => void }>)
+  // Resolve the virtual PWA module via a runtime string so TS doesn't need a hard type for it.
+  const pwaModule: string = "virtual:pwa-register";
+  (import(/* @vite-ignore */ pwaModule) as Promise<{ registerSW: (o?: unknown) => void }>)
     .then(({ registerSW }) => registerSW({ immediate: true }))
     .catch(() => {});
 }
