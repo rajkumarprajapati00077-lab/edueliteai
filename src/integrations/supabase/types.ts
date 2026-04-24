@@ -153,6 +153,7 @@ export type Database = {
           display_name: string | null
           exam_track: string
           id: string
+          recovery_email: string | null
           theme: string
           updated_at: string
           user_id: string
@@ -164,6 +165,7 @@ export type Database = {
           display_name?: string | null
           exam_track?: string
           id?: string
+          recovery_email?: string | null
           theme?: string
           updated_at?: string
           user_id: string
@@ -175,6 +177,7 @@ export type Database = {
           display_name?: string | null
           exam_track?: string
           id?: string
+          recovery_email?: string | null
           theme?: string
           updated_at?: string
           user_id?: string
