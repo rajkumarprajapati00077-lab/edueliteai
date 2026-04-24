@@ -1,283 +1,486 @@
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { BookOpen, GraduationCap, Layers, ChevronRight, Library } from "lucide-react";
+import { BookOpen, GraduationCap, Layers, ChevronRight, Library, ArrowLeft, Sparkles, Loader2 } from "lucide-react";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { PageTransition } from "@/components/PageTransition";
+import { SYLLABUS, type Course, type Subject, type Chapter, type Level } from "@/data/syllabus";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
-type Subject = { code: string; name: string; marks: number; topics: string[] };
-type Level = { id: string; name: string; description: string; subjects: Subject[] };
-type Course = { id: "CA" | "CS" | "CMA"; name: string; authority: string; tagline: string; levels: Level[] };
-
-const SYLLABUS: Course[] = [
-  {
-    id: "CA",
-    name: "Chartered Accountancy (CA)",
-    authority: "ICAI · Institute of Chartered Accountants of India",
-    tagline: "Foundation → Intermediate → Final",
-    levels: [
-      {
-        id: "CA-Foundation",
-        name: "CA Foundation",
-        description: "Entry-level exam after Class 12. Four papers, 400 marks total.",
-        subjects: [
-          { code: "Paper 1", name: "Accounting", marks: 100, topics: ["Theoretical Framework", "Journal & Ledger", "Bank Reconciliation", "Inventory", "Depreciation", "Partnership Accounts", "Company Accounts"] },
-          { code: "Paper 2", name: "Business Laws", marks: 100, topics: ["Indian Contract Act 1872", "Sale of Goods Act 1930", "Partnership Act 1932", "LLP Act 2008", "Companies Act 2013"] },
-          { code: "Paper 3", name: "Quantitative Aptitude", marks: 100, topics: ["Business Mathematics", "Logical Reasoning", "Statistics"] },
-          { code: "Paper 4", name: "Business Economics", marks: 100, topics: ["Nature & Scope", "Theory of Demand & Supply", "Production & Cost", "Market Structures", "Indian Economy"] },
-        ],
-      },
-      {
-        id: "CA-Inter",
-        name: "CA Intermediate",
-        description: "Six papers across two groups (new scheme). 600 marks total.",
-        subjects: [
-          { code: "Paper 1", name: "Advanced Accounting", marks: 100, topics: ["Ind AS introduction", "Company Accounts", "Amalgamation", "Branch & Department"] },
-          { code: "Paper 2", name: "Corporate & Other Laws", marks: 100, topics: ["Companies Act 2013", "LLP Act", "General Clauses Act", "FEMA"] },
-          { code: "Paper 3", name: "Taxation", marks: 100, topics: ["Income Tax", "GST", "Customs basics"] },
-          { code: "Paper 4", name: "Cost & Management Accounting", marks: 100, topics: ["Material/Labour/Overhead Costing", "Budgetary Control", "Standard Costing", "Marginal Costing"] },
-          { code: "Paper 5", name: "Auditing & Ethics", marks: 100, topics: ["SA series", "Audit Documentation", "Risk Assessment", "Internal Control"] },
-          { code: "Paper 6", name: "Financial & Strategic Management", marks: 100, topics: ["Time Value of Money", "Capital Budgeting", "Working Capital", "Strategic Analysis"] },
-        ],
-      },
-      {
-        id: "CA-Final",
-        name: "CA Final",
-        description: "Six papers, two groups. The last frontier — focus on application & judgment.",
-        subjects: [
-          { code: "Paper 1", name: "Financial Reporting", marks: 100, topics: ["Ind AS in depth", "Consolidated Financial Statements", "Business Combinations", "Integrated Reporting"] },
-          { code: "Paper 2", name: "Advanced Financial Management", marks: 100, topics: ["Risk Management", "Derivatives", "Mergers & Acquisitions", "International Financial Management"] },
-          { code: "Paper 3", name: "Advanced Auditing, Assurance & Professional Ethics", marks: 100, topics: ["SA series advanced", "Audit of Banks/Insurance", "Forensic Audit", "Professional Ethics"] },
-          { code: "Paper 4", name: "Direct Tax Laws & International Taxation", marks: 100, topics: ["PGBP advanced", "Capital Gains", "Transfer Pricing", "DTAA"] },
-          { code: "Paper 5", name: "Indirect Tax Laws", marks: 100, topics: ["GST in depth", "Customs & FTP"] },
-          { code: "Paper 6", name: "Integrated Business Solutions (Multi-disciplinary)", marks: 100, topics: ["Case studies across FR, Audit, Tax, SFM, Law"] },
-        ],
-      },
-    ],
-  },
-  {
-    id: "CS",
-    name: "Company Secretary (CS)",
-    authority: "ICSI · Institute of Company Secretaries of India",
-    tagline: "CSEET → Executive → Professional",
-    levels: [
-      {
-        id: "CS-Executive",
-        name: "CS Executive",
-        description: "Seven papers across two modules. Focus on company law & compliance.",
-        subjects: [
-          { code: "Paper 1", name: "Jurisprudence, Interpretation & General Laws", marks: 100, topics: ["Sources of Law", "Constitution", "Interpretation of Statutes", "General Clauses Act"] },
-          { code: "Paper 2", name: "Company Law & Practice", marks: 100, topics: ["Companies Act 2013", "Incorporation", "Share Capital", "Meetings"] },
-          { code: "Paper 3", name: "Setting up of Business, Industrial & Labour Laws", marks: 100, topics: ["Business Set-up", "Industrial Disputes", "Labour Codes"] },
-          { code: "Paper 4", name: "Corporate Accounting & Financial Management", marks: 100, topics: ["Company Accounts", "Financial Analysis", "Working Capital"] },
-          { code: "Paper 5", name: "Capital Market & Securities Laws", marks: 100, topics: ["SEBI Act", "LODR", "ICDR", "SAST"] },
-          { code: "Paper 6", name: "Economic, Commercial & Intellectual Property Laws", marks: 100, topics: ["FEMA", "Competition Act", "IPR basics"] },
-          { code: "Paper 7", name: "Tax Laws & Practice", marks: 100, topics: ["Direct Taxes", "GST", "Customs basics"] },
-        ],
-      },
-      {
-        id: "CS-Professional",
-        name: "CS Professional",
-        description: "Nine papers across three modules; choose one elective.",
-        subjects: [
-          { code: "Paper 1", name: "Governance, Risk Management, Compliances & Ethics", marks: 100, topics: ["Corporate Governance", "ERM", "Ethics"] },
-          { code: "Paper 2", name: "Drafting, Pleadings & Appearances", marks: 100, topics: ["Drafting techniques", "Pleadings", "Appearances"] },
-          { code: "Paper 3", name: "Advanced Tax Laws", marks: 100, topics: ["GST advanced", "Customs", "Direct Tax"] },
-          { code: "Paper 4", name: "Secretarial Audit, Compliance Management & Due Diligence", marks: 100, topics: ["Secretarial Audit", "Due Diligence", "Compliance Mgmt"] },
-          { code: "Paper 5", name: "Corporate Restructuring, Insolvency & Bankruptcy", marks: 100, topics: ["M&A", "IBC", "Cross-border restructuring"] },
-          { code: "Paper 6", name: "Resolution of Corporate Disputes", marks: 100, topics: ["NCLT", "Arbitration", "Mediation"] },
-          { code: "Paper 7", name: "Multidisciplinary Case Studies", marks: 100, topics: ["Case-based application across CS subjects"] },
-          { code: "Paper 8", name: "Elective (one of: Banking/Insurance/IPR/Forensic Audit/Direct Tax/Labour Laws/Valuations)", marks: 100, topics: ["Specialised study based on chosen elective"] },
-        ],
-      },
-    ],
-  },
-  {
-    id: "CMA",
-    name: "Cost & Management Accountancy (CMA)",
-    authority: "ICMAI · Institute of Cost Accountants of India",
-    tagline: "Foundation → Intermediate → Final",
-    levels: [
-      {
-        id: "CMA-Foundation",
-        name: "CMA Foundation",
-        description: "Entry-level. Four papers, 400 marks total.",
-        subjects: [
-          { code: "Paper 1", name: "Fundamentals of Business Laws & Business Communication", marks: 100, topics: ["Contract Act", "Sale of Goods", "Negotiable Instruments", "Communication"] },
-          { code: "Paper 2", name: "Fundamentals of Financial & Cost Accounting", marks: 100, topics: ["Accounting basics", "Cost concepts", "Cost sheets"] },
-          { code: "Paper 3", name: "Fundamentals of Business Mathematics & Statistics", marks: 100, topics: ["Arithmetic", "Algebra", "Calculus", "Statistics basics"] },
-          { code: "Paper 4", name: "Fundamentals of Business Economics & Management", marks: 100, topics: ["Microeconomics", "Macroeconomics", "Management functions"] },
-        ],
-      },
-      {
-        id: "CMA-Inter",
-        name: "CMA Intermediate",
-        description: "Eight papers across two groups.",
-        subjects: [
-          { code: "Paper 5", name: "Business Laws & Ethics", marks: 100, topics: ["Industrial Laws", "Companies Act", "Ethics"] },
-          { code: "Paper 6", name: "Financial Accounting", marks: 100, topics: ["Accounting Standards", "Partnership", "Branch & Department"] },
-          { code: "Paper 7", name: "Direct & Indirect Taxation", marks: 100, topics: ["Income Tax basics", "GST"] },
-          { code: "Paper 8", name: "Cost Accounting", marks: 100, topics: ["Material/Labour/Overhead", "Methods of Costing"] },
-          { code: "Paper 9", name: "Operations Management & Strategic Management", marks: 100, topics: ["Operations Mgmt", "Strategic Mgmt"] },
-          { code: "Paper 10", name: "Corporate Accounting & Auditing", marks: 100, topics: ["Company Accounts", "Auditing basics"] },
-          { code: "Paper 11", name: "Financial Management & Business Data Analytics", marks: 100, topics: ["FM tools", "Business analytics"] },
-          { code: "Paper 12", name: "Management Accounting", marks: 100, topics: ["Marginal Costing", "Budgetary Control", "Decision making"] },
-        ],
-      },
-      {
-        id: "CMA-Final",
-        name: "CMA Final",
-        description: "Eight papers across two groups; includes one elective.",
-        subjects: [
-          { code: "Paper 13", name: "Corporate & Economic Laws", marks: 100, topics: ["Companies Act advanced", "SEBI", "FEMA"] },
-          { code: "Paper 14", name: "Strategic Financial Management", marks: 100, topics: ["Investment decisions", "Risk Mgmt", "International FM"] },
-          { code: "Paper 15", name: "Direct Tax Laws & International Taxation", marks: 100, topics: ["DT advanced", "Transfer Pricing", "DTAA"] },
-          { code: "Paper 16", name: "Strategic Cost Management", marks: 100, topics: ["Activity Based Costing", "Target Costing", "Lean accounting"] },
-          { code: "Paper 17", name: "Cost & Management Audit", marks: 100, topics: ["Cost Audit", "Mgmt Audit", "Internal Audit"] },
-          { code: "Paper 18", name: "Corporate Financial Reporting", marks: 100, topics: ["Ind AS", "Consolidation", "Integrated Reporting"] },
-          { code: "Paper 19", name: "Indirect Tax Laws & Practice", marks: 100, topics: ["GST advanced", "Customs", "FTP"] },
-          { code: "Paper 20", name: "Elective (Strategic Performance Mgmt / Risk Mgmt / Entrepreneurship / Business Valuation)", marks: 100, topics: ["Specialised electives"] },
-        ],
-      },
-    ],
-  },
-];
+type View =
+  | { kind: "course" }
+  | { kind: "level"; courseId: Course["id"] }
+  | { kind: "subject"; courseId: Course["id"]; levelId: string }
+  | { kind: "chapters"; courseId: Course["id"]; levelId: string; subjectCode: string }
+  | { kind: "chapter"; courseId: Course["id"]; levelId: string; subjectCode: string; chapterId: string }
+  | { kind: "summary"; courseId: Course["id"]; levelId: string; subjectCode: string };
 
 const Syllabus = () => {
-  const [courseId, setCourseId] = useState<Course["id"]>("CA");
-  const course = useMemo(() => SYLLABUS.find((c) => c.id === courseId)!, [courseId]);
-  const [levelId, setLevelId] = useState<string>(course.levels[0].id);
-  const level = useMemo(() => course.levels.find((l) => l.id === levelId) ?? course.levels[0], [course, levelId]);
+  const [view, setView] = useState<View>({ kind: "course" });
 
-  const onCourse = (id: Course["id"]) => {
-    setCourseId(id);
-    const c = SYLLABUS.find((x) => x.id === id)!;
-    setLevelId(c.levels[0].id);
-  };
-
-  const totalMarks = level.subjects.reduce((s, x) => s + x.marks, 0);
+  const course = useMemo(
+    () => ("courseId" in view ? SYLLABUS.find((c) => c.id === (view as any).courseId) : undefined),
+    [view],
+  );
+  const level = useMemo<Level | undefined>(() => {
+    if (!course || !("levelId" in view)) return undefined;
+    return course.levels.find((l) => l.id === (view as any).levelId);
+  }, [course, view]);
+  const subject = useMemo<Subject | undefined>(() => {
+    if (!level || !("subjectCode" in view)) return undefined;
+    return level.subjects.find((s) => s.code === (view as any).subjectCode);
+  }, [level, view]);
+  const chapter = useMemo<Chapter | undefined>(() => {
+    if (!subject || view.kind !== "chapter") return undefined;
+    return subject.chapters.find((c) => c.id === view.chapterId);
+  }, [subject, view]);
 
   return (
     <PageTransition>
       <div className="flex min-h-screen w-full bg-background">
         <DashboardSidebar />
         <main className="flex-1 px-6 lg:px-10 py-8 max-w-6xl mx-auto w-full">
-          <div className="flex items-center gap-3 mb-1">
-            <Library className="h-5 w-5 text-primary" />
-            <h1 className="font-display text-3xl font-bold tracking-tight">Syllabus Sheets</h1>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            Full chapter-wise syllabus for CA, CS and CMA. Pick a course and level to see every subject, mark distribution and core topics.
-          </p>
+          <Header view={view} setView={setView} course={course} level={level} subject={subject} chapter={chapter} />
 
-          {/* Course selector */}
-          <div className="mt-6 grid sm:grid-cols-3 gap-3">
-            {SYLLABUS.map((c) => {
-              const active = c.id === courseId;
-              return (
-                <button
-                  key={c.id}
-                  onClick={() => onCourse(c.id)}
-                  className={`btn-3d text-left rounded-2xl p-4 border transition-all ${
-                    active
-                      ? "border-primary bg-gradient-primary text-primary-foreground glow-primary"
-                      : "border-border bg-card/40 hover:border-primary/50"
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <GraduationCap className="h-4 w-4" />
-                    <p className="font-display font-semibold">{c.name}</p>
-                  </div>
-                  <p className={`text-[11px] mt-1 ${active ? "opacity-90" : "text-muted-foreground"}`}>{c.authority}</p>
-                  <p className={`text-[11px] mt-0.5 ${active ? "opacity-80" : "text-muted-foreground"}`}>{c.tagline}</p>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Level tabs */}
-          <div className="mt-6 flex flex-wrap gap-2">
-            {course.levels.map((l) => {
-              const active = l.id === levelId;
-              return (
-                <button
-                  key={l.id}
-                  onClick={() => setLevelId(l.id)}
-                  className={`btn-3d rounded-full px-4 py-1.5 text-xs border transition-colors ${
-                    active ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground hover:text-foreground hover:border-primary/50"
-                  }`}
-                >
-                  {l.name}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Level summary */}
           <AnimatePresence mode="wait">
-            <motion.section
-              key={level.id}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.25 }}
-              className="mt-5 glass-strong rounded-2xl p-6 shadow-3d"
-            >
-              <div className="flex flex-wrap items-end justify-between gap-3">
-                <div>
-                  <h2 className="font-display text-xl font-semibold flex items-center gap-2">
-                    <Layers className="h-4 w-4 text-primary" /> {level.name}
-                  </h2>
-                  <p className="text-xs text-muted-foreground mt-1">{level.description}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Total</p>
-                  <p className="font-display text-2xl font-bold text-gradient tabular-nums">
-                    {level.subjects.length} <span className="text-base text-muted-foreground">papers</span> · {totalMarks} <span className="text-base text-muted-foreground">marks</span>
-                  </p>
-                </div>
-              </div>
+            {view.kind === "course" && <CourseGrid key="course" onPick={(id) => setView({ kind: "level", courseId: id })} />}
 
-              <div className="mt-5 grid md:grid-cols-2 gap-3">
-                {level.subjects.map((s, i) => (
-                  <motion.div
-                    key={s.code}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.25, delay: i * 0.04 }}
-                    className="glass rounded-2xl p-4 shadow-3d"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-start gap-2">
-                        <BookOpen className="h-4 w-4 text-primary mt-0.5" />
-                        <div>
-                          <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{s.code}</p>
-                          <p className="font-display font-semibold leading-tight">{s.name}</p>
-                        </div>
-                      </div>
-                      <span className="text-[11px] rounded-full bg-secondary px-2 py-0.5 text-muted-foreground tabular-nums shrink-0">
-                        {s.marks} marks
-                      </span>
-                    </div>
-                    <ul className="mt-3 space-y-1">
-                      {s.topics.map((t) => (
-                        <li key={t} className="flex items-start gap-2 text-xs text-muted-foreground">
-                          <ChevronRight className="h-3.5 w-3.5 text-primary/70 mt-0.5 shrink-0" />
-                          <span>{t}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.section>
+            {view.kind === "level" && course && (
+              <LevelGrid
+                key="level"
+                course={course}
+                onPick={(lid) => setView({ kind: "subject", courseId: course.id, levelId: lid })}
+              />
+            )}
+
+            {view.kind === "subject" && course && level && (
+              <SubjectGrid
+                key="subject"
+                course={course}
+                level={level}
+                onPick={(code) => setView({ kind: "chapters", courseId: course.id, levelId: level.id, subjectCode: code })}
+                onSummary={() => setView({ kind: "summary", courseId: course.id, levelId: level.id, subjectCode: "__ALL__" })}
+              />
+            )}
+
+            {view.kind === "chapters" && course && level && subject && (
+              <ChapterList
+                key="chapters"
+                course={course}
+                level={level}
+                subject={subject}
+                onPick={(chId) =>
+                  setView({ kind: "chapter", courseId: course.id, levelId: level.id, subjectCode: subject.code, chapterId: chId })
+                }
+                onSummary={() =>
+                  setView({ kind: "summary", courseId: course.id, levelId: level.id, subjectCode: subject.code })
+                }
+              />
+            )}
+
+            {view.kind === "chapter" && course && level && subject && chapter && (
+              <ChapterView key="chapter" course={course} level={level} subject={subject} chapter={chapter} />
+            )}
+
+            {view.kind === "summary" && course && level && (
+              <AllChapterSummary
+                key="summary"
+                course={course}
+                level={level}
+                subject={view.subjectCode === "__ALL__" ? undefined : level.subjects.find((s) => s.code === view.subjectCode)}
+              />
+            )}
           </AnimatePresence>
 
-          <p className="text-[11px] text-muted-foreground mt-4">
+          <p className="text-[11px] text-muted-foreground mt-6">
             Reference syllabus compiled from ICAI, ICSI and ICMAI publications. Always verify with the latest official notification before your attempt.
           </p>
         </main>
       </div>
     </PageTransition>
+  );
+};
+
+/* ---------------- Header / breadcrumb ---------------- */
+
+const Header = ({
+  view, setView, course, level, subject, chapter,
+}: {
+  view: View;
+  setView: (v: View) => void;
+  course?: Course; level?: Level; subject?: Subject; chapter?: Chapter;
+}) => {
+  const back = () => {
+    if (view.kind === "level") setView({ kind: "course" });
+    else if (view.kind === "subject") setView({ kind: "level", courseId: view.courseId });
+    else if (view.kind === "chapters") setView({ kind: "subject", courseId: view.courseId, levelId: view.levelId });
+    else if (view.kind === "chapter")
+      setView({ kind: "chapters", courseId: view.courseId, levelId: view.levelId, subjectCode: view.subjectCode });
+    else if (view.kind === "summary") {
+      if (view.subjectCode === "__ALL__")
+        setView({ kind: "subject", courseId: view.courseId, levelId: view.levelId });
+      else setView({ kind: "chapters", courseId: view.courseId, levelId: view.levelId, subjectCode: view.subjectCode });
+    }
+  };
+
+  return (
+    <div className="mb-5">
+      <div className="flex items-center gap-3">
+        <Library className="h-5 w-5 text-primary" />
+        <h1 className="font-display text-3xl font-bold tracking-tight">Syllabus Sheets</h1>
+      </div>
+      <p className="text-sm text-muted-foreground mt-1">
+        Drill into every chapter of every subject. AI-generated summaries available for each.
+      </p>
+
+      {view.kind !== "course" && (
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          <button
+            onClick={back}
+            className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs hover:border-primary/50"
+          >
+            <ArrowLeft className="h-3 w-3" /> Back
+          </button>
+          <Crumb onClick={() => setView({ kind: "course" })}>Courses</Crumb>
+          {course && (
+            <Crumb onClick={() => setView({ kind: "level", courseId: course.id })}>{course.id}</Crumb>
+          )}
+          {level && (
+            <Crumb onClick={() => setView({ kind: "subject", courseId: course!.id, levelId: level.id })}>{level.name}</Crumb>
+          )}
+          {subject && (
+            <Crumb
+              onClick={() =>
+                setView({ kind: "chapters", courseId: course!.id, levelId: level!.id, subjectCode: subject.code })
+              }
+            >
+              {subject.name}
+            </Crumb>
+          )}
+          {chapter && <Crumb>{chapter.title}</Crumb>}
+          {view.kind === "summary" && <Crumb>Summary by AI</Crumb>}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const Crumb = ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => (
+  <button
+    onClick={onClick}
+    disabled={!onClick}
+    className="text-[11px] uppercase tracking-widest text-muted-foreground hover:text-foreground disabled:cursor-default"
+  >
+    <span className="mr-2 opacity-50">/</span>
+    {children}
+  </button>
+);
+
+/* ---------------- Course grid ---------------- */
+
+const CourseGrid = ({ onPick }: { onPick: (id: Course["id"]) => void }) => (
+  <motion.section
+    initial={{ opacity: 0, y: 12 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -8 }}
+    transition={{ duration: 0.25 }}
+    className="grid sm:grid-cols-3 gap-3"
+  >
+    {SYLLABUS.map((c) => (
+      <button
+        key={c.id}
+        onClick={() => onPick(c.id)}
+        className="btn-3d text-left rounded-2xl p-5 border border-border bg-card/40 hover:border-primary/50 transition-all"
+      >
+        <div className="flex items-center gap-2">
+          <GraduationCap className="h-4 w-4 text-primary" />
+          <p className="font-display font-semibold">{c.name}</p>
+        </div>
+        <p className="text-[11px] mt-2 text-muted-foreground">{c.authority}</p>
+        <p className="text-[11px] mt-0.5 text-muted-foreground">{c.tagline}</p>
+        <p className="mt-3 text-xs text-primary inline-flex items-center gap-1">
+          Open <ChevronRight className="h-3 w-3" />
+        </p>
+      </button>
+    ))}
+  </motion.section>
+);
+
+/* ---------------- Level grid ---------------- */
+
+const LevelGrid = ({ course, onPick }: { course: Course; onPick: (lid: string) => void }) => (
+  <motion.section
+    initial={{ opacity: 0, y: 12 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -8 }}
+    transition={{ duration: 0.25 }}
+    className="grid sm:grid-cols-3 gap-3"
+  >
+    {course.levels.map((l) => {
+      const total = l.subjects.reduce((s, x) => s + x.marks, 0);
+      return (
+        <button
+          key={l.id}
+          onClick={() => onPick(l.id)}
+          className="btn-3d text-left rounded-2xl p-5 border border-border bg-card/40 hover:border-primary/50"
+        >
+          <div className="flex items-center gap-2">
+            <Layers className="h-4 w-4 text-primary" />
+            <p className="font-display font-semibold">{l.name}</p>
+          </div>
+          <p className="text-[11px] mt-2 text-muted-foreground">{l.description}</p>
+          <p className="mt-3 text-xs text-gradient font-display">
+            {l.subjects.length} papers · {total} marks
+          </p>
+        </button>
+      );
+    })}
+  </motion.section>
+);
+
+/* ---------------- Subject grid ---------------- */
+
+const SubjectGrid = ({
+  course, level, onPick, onSummary,
+}: {
+  course: Course; level: Level; onPick: (code: string) => void; onSummary: () => void;
+}) => (
+  <motion.section
+    initial={{ opacity: 0, y: 12 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -8 }}
+    transition={{ duration: 0.25 }}
+  >
+    <div className="grid md:grid-cols-2 gap-3">
+      {level.subjects.map((s) => (
+        <button
+          key={s.code}
+          onClick={() => onPick(s.code)}
+          className="btn-3d text-left glass rounded-2xl p-4 shadow-3d hover:border-primary/50 border border-transparent"
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start gap-2">
+              <BookOpen className="h-4 w-4 text-primary mt-0.5" />
+              <div>
+                <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{s.code}</p>
+                <p className="font-display font-semibold leading-tight">{s.name}</p>
+              </div>
+            </div>
+            <span className="text-[11px] rounded-full bg-secondary px-2 py-0.5 text-muted-foreground tabular-nums shrink-0">
+              {s.marks} marks
+            </span>
+          </div>
+          <p className="text-[11px] text-muted-foreground mt-2">{s.chapters.length} chapters · tap to view</p>
+        </button>
+      ))}
+    </div>
+
+    <button
+      onClick={onSummary}
+      className="btn-3d mt-5 inline-flex items-center gap-2 rounded-full bg-gradient-primary text-primary-foreground px-4 py-2 text-sm glow-primary"
+    >
+      <Sparkles className="h-4 w-4" />
+      Summary of all subjects by AI
+    </button>
+    <p className="text-[11px] text-muted-foreground mt-2">Generates a quick faculty-style overview of every paper in {level.name}.</p>
+  </motion.section>
+);
+
+/* ---------------- Chapter list ---------------- */
+
+const ChapterList = ({
+  course, level, subject, onPick, onSummary,
+}: {
+  course: Course; level: Level; subject: Subject;
+  onPick: (id: string) => void; onSummary: () => void;
+}) => (
+  <motion.section
+    initial={{ opacity: 0, y: 12 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -8 }}
+    transition={{ duration: 0.25 }}
+    className="glass-strong rounded-2xl p-6 shadow-3d"
+  >
+    <div className="flex flex-wrap items-end justify-between gap-3 mb-4">
+      <div>
+        <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{subject.code}</p>
+        <h2 className="font-display text-xl font-semibold">{subject.name}</h2>
+        <p className="text-xs text-muted-foreground mt-1">{subject.chapters.length} chapters · {subject.marks} marks</p>
+      </div>
+      <button
+        onClick={onSummary}
+        className="btn-3d inline-flex items-center gap-2 rounded-full bg-gradient-primary text-primary-foreground px-3.5 py-1.5 text-xs glow-primary"
+      >
+        <Sparkles className="h-3.5 w-3.5" />
+        Summary of all chapters by AI
+      </button>
+    </div>
+    <ol className="grid md:grid-cols-2 gap-2">
+      {subject.chapters.map((ch, i) => (
+        <li key={ch.id}>
+          <button
+            onClick={() => onPick(ch.id)}
+            className="btn-3d w-full text-left flex items-center justify-between gap-2 rounded-xl border border-border bg-card/40 px-3 py-2.5 hover:border-primary/50"
+          >
+            <span className="text-sm">
+              <span className="text-muted-foreground tabular-nums mr-2">{String(i + 1).padStart(2, "0")}</span>
+              {ch.title}
+            </span>
+            <ChevronRight className="h-4 w-4 text-primary/70" />
+          </button>
+        </li>
+      ))}
+    </ol>
+  </motion.section>
+);
+
+/* ---------------- Single chapter ---------------- */
+
+const ChapterView = ({
+  course, level, subject, chapter,
+}: { course: Course; level: Level; subject: Subject; chapter: Chapter }) => {
+  const [summary, setSummary] = useState<string>("");
+  const [loading, setLoading] = useState(false);
+
+  const generate = async () => {
+    setLoading(true);
+    setSummary("");
+    try {
+      const { data, error } = await supabase.functions.invoke("chapter-summary", {
+        body: {
+          course: course.name,
+          level: level.name,
+          subject: subject.name,
+          chapter: chapter.title,
+          topics: chapter.topics,
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      setSummary(data?.summary ?? "");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not generate summary");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -8 }}
+      transition={{ duration: 0.25 }}
+      className="glass-strong rounded-2xl p-6 shadow-3d"
+    >
+      <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{subject.code} · {subject.name}</p>
+      <h2 className="font-display text-2xl font-semibold mt-1">{chapter.title}</h2>
+
+      <div className="mt-5">
+        <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-2">Topics covered</p>
+        <ul className="grid sm:grid-cols-2 gap-1.5">
+          {chapter.topics.map((t) => (
+            <li key={t} className="flex items-start gap-2 text-sm text-foreground/90">
+              <ChevronRight className="h-4 w-4 text-primary/70 mt-0.5 shrink-0" />
+              <span>{t}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="mt-6 border-t border-border/40 pt-5">
+        <div className="flex items-center justify-between gap-3 mb-3">
+          <h3 className="font-display font-semibold inline-flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-primary" /> Summary by AI
+          </h3>
+          <button
+            onClick={generate}
+            disabled={loading}
+            className="btn-3d inline-flex items-center gap-2 rounded-full bg-gradient-primary text-primary-foreground px-3.5 py-1.5 text-xs glow-primary disabled:opacity-50"
+          >
+            {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+            {summary ? "Regenerate" : "Generate summary"}
+          </button>
+        </div>
+        {summary ? (
+          <article className="text-sm leading-relaxed whitespace-pre-wrap text-foreground/90">{summary}</article>
+        ) : (
+          <p className="text-xs text-muted-foreground">Tap “Generate summary” to get a faculty-style overview of this chapter.</p>
+        )}
+      </div>
+    </motion.section>
+  );
+};
+
+/* ---------------- All-chapters / all-subjects summary ---------------- */
+
+const AllChapterSummary = ({
+  course, level, subject,
+}: { course: Course; level: Level; subject?: Subject }) => {
+  const [summary, setSummary] = useState<string>("");
+  const [loading, setLoading] = useState(false);
+
+  const generate = async () => {
+    setLoading(true);
+    setSummary("");
+    try {
+      const body = subject
+        ? {
+            course: course.name,
+            level: level.name,
+            subject: subject.name,
+            chapter: "All chapters overview",
+            topics: subject.chapters.map((c) => c.title),
+          }
+        : {
+            course: course.name,
+            level: level.name,
+            subject: `${level.name} — All papers`,
+            chapter: "Whole-level overview",
+            topics: level.subjects.map((s) => `${s.code}: ${s.name}`),
+          };
+      const { data, error } = await supabase.functions.invoke("chapter-summary", { body });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      setSummary(data?.summary ?? "");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not generate summary");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -8 }}
+      transition={{ duration: 0.25 }}
+      className="glass-strong rounded-2xl p-6 shadow-3d"
+    >
+      <h2 className="font-display text-xl font-semibold inline-flex items-center gap-2">
+        <Sparkles className="h-5 w-5 text-primary" />
+        {subject ? `${subject.name} — Summary by AI` : `${level.name} — Summary by AI`}
+      </h2>
+      <p className="text-xs text-muted-foreground mt-1">
+        AI-generated overview spanning {subject ? `${subject.chapters.length} chapters` : `${level.subjects.length} papers`}.
+      </p>
+
+      <button
+        onClick={generate}
+        disabled={loading}
+        className="btn-3d mt-4 inline-flex items-center gap-2 rounded-full bg-gradient-primary text-primary-foreground px-4 py-2 text-sm glow-primary disabled:opacity-50"
+      >
+        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+        {summary ? "Regenerate" : "Generate"}
+      </button>
+
+      {summary ? (
+        <article className="mt-5 text-sm leading-relaxed whitespace-pre-wrap text-foreground/90">{summary}</article>
+      ) : (
+        <p className="text-xs text-muted-foreground mt-4">Tap “Generate” to draft a clean, exam-ready summary.</p>
+      )}
+    </motion.section>
   );
 };
 
