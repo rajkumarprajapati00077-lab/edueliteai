@@ -4,3 +4,9 @@ verify_jwt = false
 
 [functions.exam-info]
 verify_jwt = false
+
+[functions.linkage]
+verify_jwt = false
+
+[functions.planner]
+verify_jwt = false
