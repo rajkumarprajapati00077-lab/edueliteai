@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Languages, Send, Sparkles, User, ArrowLeft, Plus, MessageSquare } from "lucide-react";
+import { Languages, Send, Sparkles, User, ArrowLeft, Plus, MessageSquare, Bot } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Link } from "react-router-dom";
@@ -14,6 +14,13 @@ type Conv = { id: string; title: string; created_at: string };
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 
+const CHAT_MODELS = [
+  { id: "google/gemini-2.5-pro",   label: "Gemini Pro",   tag: "Deep" },
+  { id: "google/gemini-2.5-flash", label: "Gemini Flash", tag: "Fast" },
+  { id: "openai/gpt-5",            label: "GPT-5",        tag: "Premium" },
+  { id: "openai/gpt-5-mini",       label: "GPT-5 Mini",   tag: "Quick" },
+] as const;
+
 const Chat = () => {
   const { user } = useAuth();
   const [convs, setConvs] = useState<Conv[]>([]);
@@ -21,6 +28,7 @@ const Chat = () => {
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [bilingual, setBilingual] = useState(true);
+  const [model, setModel] = useState<string>(CHAT_MODELS[0].id);
   const [streaming, setStreaming] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -107,7 +115,7 @@ const Chat = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ messages: [...messages, userMsg], bilingual }),
+        body: JSON.stringify({ messages: [...messages, userMsg], bilingual, model }),
       });
       if (resp.status === 429) { toast.error("Rate limit — try again in a moment."); setStreaming(false); return; }
       if (resp.status === 402) { toast.error("AI credits exhausted. Add credits in Workspace → Usage."); setStreaming(false); return; }
@@ -189,12 +197,37 @@ const Chat = () => {
                   <p className="text-[10px] text-muted-foreground">Hindi or English in · exam-grade English out</p>
                 </div>
               </div>
-              <button onClick={() => setBilingual((b) => !b)} className="flex items-center gap-2 glass rounded-full pl-3 pr-1 py-1 text-xs" aria-pressed={bilingual}>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setBilingual((b) => !b)} className="flex items-center gap-2 glass rounded-full pl-3 pr-1 py-1 text-xs" aria-pressed={bilingual}>
                 <span className="text-muted-foreground hidden sm:inline">Hindi → English</span>
                 <span className={`relative h-6 w-11 rounded-full transition-colors ${bilingual ? "bg-gradient-primary" : "bg-secondary"}`}>
                   <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-background shadow transition-transform ${bilingual ? "translate-x-5" : "translate-x-0.5"}`} />
                 </span>
-              </button>
+                </button>
+              </div>
+            </div>
+            <div className="max-w-4xl mx-auto px-4 pb-3 flex items-center gap-2 overflow-x-auto">
+              <Bot className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+              <span className="text-[10px] uppercase tracking-widest text-muted-foreground shrink-0">Model</span>
+              {CHAT_MODELS.map((m) => {
+                const active = model === m.id;
+                return (
+                  <button
+                    key={m.id}
+                    onClick={() => setModel(m.id)}
+                    disabled={streaming}
+                    className={`shrink-0 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs transition-colors ${
+                      active
+                        ? "bg-gradient-primary text-primary-foreground glow-primary"
+                        : "glass text-muted-foreground hover:text-foreground"
+                    } disabled:opacity-50`}
+                    aria-pressed={active}
+                  >
+                    <span className="font-medium">{m.label}</span>
+                    <span className={`text-[9px] uppercase tracking-wider ${active ? "text-primary-foreground/80" : "text-muted-foreground/70"}`}>{m.tag}</span>
+                  </button>
+                );
+              })}
             </div>
           </header>
 
