@@ -10,3 +10,9 @@ verify_jwt = false
 
 [functions.planner]
 verify_jwt = false
+
+[functions.chapter-summary]
+verify_jwt = false
+
+[functions.quiz-generator]
+verify_jwt = false
