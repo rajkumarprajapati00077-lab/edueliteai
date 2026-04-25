@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Brain, Loader2, CheckCircle2, XCircle, Sparkles, ScrollText } from "lucide-react";
+import { Brain, Loader2, CheckCircle2, XCircle, Sparkles, ScrollText, BookOpen, ExternalLink, Globe } from "lucide-react";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { MobileNav } from "@/components/MobileNav";
 import { PageTransition } from "@/components/PageTransition";
@@ -19,6 +19,11 @@ const Quiz = () => {
   const level = useMemo(() => course.levels.find((l) => l.id === levelId) ?? course.levels[0], [course, levelId]);
   const [subjectCode, setSubjectCode] = useState(level.subjects[0].code);
   const subject = useMemo(() => level.subjects.find((s) => s.code === subjectCode) ?? level.subjects[0], [level, subjectCode]);
+  const [chapterId, setChapterId] = useState<string>("__all__");
+  const chapter = useMemo(
+    () => (chapterId === "__all__" ? null : subject.chapters.find((c) => c.id === chapterId) ?? null),
+    [subject, chapterId]
+  );
   const [mode, setMode] = useState<Mode>("mcq");
   const [loading, setLoading] = useState(false);
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -31,12 +36,14 @@ const Quiz = () => {
     const c = SYLLABUS.find((x) => x.id === id)!;
     setLevelId(c.levels[0].id);
     setSubjectCode(c.levels[0].subjects[0].code);
+    setChapterId("__all__");
     reset();
   };
   const onLevel = (lid: string) => {
     setLevelId(lid);
     const l = course.levels.find((x) => x.id === lid)!;
     setSubjectCode(l.subjects[0].code);
+    setChapterId("__all__");
     reset();
   };
   const reset = () => { setQuestions([]); setCases([]); setPicked({}); setSubmitted(false); };
@@ -46,7 +53,13 @@ const Quiz = () => {
     reset();
     try {
       const { data, error } = await supabase.functions.invoke("quiz-generator", {
-        body: { course: course.name, level: level.name, subject: subject.name, mode },
+        body: {
+          course: course.name,
+          level: level.name,
+          subject: subject.name,
+          chapter: chapter ? `${chapter.title} — Topics: ${chapter.topics.join("; ")}` : undefined,
+          mode,
+        },
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
@@ -79,7 +92,24 @@ const Quiz = () => {
           </div>
           <p className="text-sm text-muted-foreground">AI-generated MCQs, case studies and 30-mark practice sets across CA, CS, CMA.</p>
 
-          <section className="mt-5 glass-strong rounded-2xl p-5 shadow-3d">
+          {/* Course pills */}
+          <div className="mt-5 flex flex-wrap gap-2">
+            {SYLLABUS.map((c) => (
+              <button
+                key={c.id}
+                onClick={() => onCourse(c.id)}
+                className={`btn-3d rounded-full px-4 py-1.5 text-xs font-semibold border transition-colors ${
+                  courseId === c.id
+                    ? "bg-gradient-primary text-primary-foreground border-transparent glow-primary"
+                    : "border-border hover:border-primary/50 bg-background/40"
+                }`}
+              >
+                {c.id} · {c.name.split("(")[0].trim()}
+              </button>
+            ))}
+          </div>
+
+          <section className="mt-4 glass-strong rounded-2xl p-5 shadow-3d">
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
               <Field label="Course">
                 <select value={courseId} onChange={(e) => onCourse(e.target.value as any)} className="w-full bg-transparent outline-none text-sm">
@@ -92,7 +122,7 @@ const Quiz = () => {
                 </select>
               </Field>
               <Field label="Subject">
-                <select value={subjectCode} onChange={(e) => { setSubjectCode(e.target.value); reset(); }} className="w-full bg-transparent outline-none text-sm">
+                <select value={subjectCode} onChange={(e) => { setSubjectCode(e.target.value); setChapterId("__all__"); reset(); }} className="w-full bg-transparent outline-none text-sm">
                   {level.subjects.map((s) => <option key={s.code} value={s.code}>{s.name}</option>)}
                 </select>
               </Field>
@@ -105,14 +135,60 @@ const Quiz = () => {
               </Field>
             </div>
 
-            <button
-              onClick={generate}
-              disabled={loading}
-              className="btn-3d mt-4 inline-flex items-center gap-2 rounded-full bg-gradient-primary text-primary-foreground px-4 py-2 text-sm glow-primary disabled:opacity-50"
-            >
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-              Generate quiz
-            </button>
+            {/* Chapter chips */}
+            <div className="mt-4">
+              <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-2 flex items-center gap-1.5">
+                <BookOpen className="h-3 w-3" /> Pick a chapter (or full subject)
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <ChapterChip active={chapterId === "__all__"} onClick={() => { setChapterId("__all__"); reset(); }}>
+                  Full syllabus
+                </ChapterChip>
+                {subject.chapters.map((ch) => (
+                  <ChapterChip key={ch.id} active={chapterId === ch.id} onClick={() => { setChapterId(ch.id); reset(); }}>
+                    {ch.title}
+                  </ChapterChip>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              <button
+                onClick={generate}
+                disabled={loading}
+                className="btn-3d inline-flex items-center gap-2 rounded-full bg-gradient-primary text-primary-foreground px-4 py-2 text-sm glow-primary disabled:opacity-50"
+              >
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                Generate {mode === "mcq30" ? "30-mark MCQs" : mode === "case-study" ? "case studies" : "10 MCQs"}
+              </button>
+
+              {/* Internet sources */}
+              <SourceLink
+                label="ICAI / ICSI / ICMAI search"
+                href={`https://www.google.com/search?q=${encodeURIComponent(
+                  `${course.authority.split("·")[0].trim()} ${level.name} ${subject.name} ${chapter ? chapter.title : ""} important MCQs site:icai.org OR site:icsi.edu OR site:icmai.in`
+                )}`}
+              />
+              <SourceLink
+                label="MCQ bank"
+                href={`https://www.google.com/search?q=${encodeURIComponent(
+                  `${course.id} ${level.name} ${subject.name} ${chapter ? chapter.title : ""} MCQ with answers`
+                )}`}
+              />
+              <SourceLink
+                label="YouTube lectures"
+                href={`https://www.youtube.com/results?search_query=${encodeURIComponent(
+                  `${course.id} ${level.name} ${subject.name} ${chapter ? chapter.title : "full syllabus"} lecture`
+                )}`}
+              />
+            </div>
+
+            {chapter && (
+              <div className="mt-4 rounded-xl border border-border/60 bg-background/30 p-3">
+                <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Topics covered</p>
+                <p className="text-xs mt-1 leading-relaxed">{chapter.topics.join(" · ")}</p>
+              </div>
+            )}
           </section>
 
           <AnimatePresence>
@@ -168,6 +244,32 @@ const Field = ({ label, children }: { label: string; children: React.ReactNode }
     <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1">{label}</p>
     <div className="glass rounded-xl px-3 py-2.5">{children}</div>
   </label>
+);
+
+const ChapterChip = ({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) => (
+  <button
+    onClick={onClick}
+    className={`btn-3d rounded-full px-3 py-1 text-[11px] border transition-colors ${
+      active
+        ? "bg-primary/15 border-primary text-foreground"
+        : "border-border hover:border-primary/50 text-muted-foreground hover:text-foreground"
+    }`}
+  >
+    {children}
+  </button>
+);
+
+const SourceLink = ({ label, href }: { label: string; href: string }) => (
+  <a
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="btn-3d inline-flex items-center gap-1.5 rounded-full border border-border hover:border-primary/60 px-3 py-1.5 text-[11px] text-muted-foreground hover:text-foreground bg-background/40"
+  >
+    <Globe className="h-3 w-3" />
+    {label}
+    <ExternalLink className="h-3 w-3 opacity-60" />
+  </a>
 );
 
 const QCard = ({

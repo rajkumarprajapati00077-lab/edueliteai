@@ -10,6 +10,20 @@ type Section = { id: string; name: string; tagline: string; tracks: Track[] };
 
 const SECTIONS: Section[] = [
   {
+    id: "focus", name: "Peaceful Instrumentals for Focus", tagline: "Hand-picked, no lyrics. Pure concentration fuel.",
+    tracks: [
+      { title: "Ludovico Einaudi — Nuvole Bianche", ytId: "4VR-6AS0-l4", by: "Ludovico Einaudi" },
+      { title: "Yiruma — River Flows in You", ytId: "7maJOI3QMu0", by: "Yiruma" },
+      { title: "Joe Hisaishi — Studio Ghibli Piano", ytId: "TbM_2VkUsRA", by: "Joe Hisaishi" },
+      { title: "Max Richter — On the Nature of Daylight", ytId: "rVN1B-tUpgs", by: "Max Richter" },
+      { title: "Ólafur Arnalds — Re:member", ytId: "leLNHaQp4OA", by: "Ólafur Arnalds" },
+      { title: "Nils Frahm — Says", ytId: "dIwwjy4slI8", by: "Nils Frahm" },
+      { title: "Erik Satie — Gymnopédies", ytId: "S-Xm7s9eGxU", by: "Erik Satie" },
+      { title: "Debussy — Clair de Lune", ytId: "CvFH_6DNRCY", by: "Claude Debussy" },
+      { title: "Bach — Cello Suite No. 1", ytId: "mGQLXRTl3Z0", by: "J.S. Bach" },
+    ],
+  },
+  {
     id: "relax", name: "Relaxing & Calming", tagline: "Slow tempo, low BPM. Reset your mind.",
     tracks: [
       { title: "Peaceful Piano — Stress Relief", ytId: "lFcSrYw-ARY", by: "Soothing Relaxation" },
