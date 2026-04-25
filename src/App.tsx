@@ -19,6 +19,9 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { RequireAuth } from "./components/RequireAuth";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Notes from "./pages/Notes.tsx";
+import Music from "./pages/Music.tsx";
+import Quiz from "./pages/Quiz.tsx";
+import ResetPassword from "./pages/ResetPassword.tsx";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +39,9 @@ const AnimatedRoutes = () => {
         <Route path="/syllabus" element={<RequireAuth><Syllabus /></RequireAuth>} />
         <Route path="/inter-linkage" element={<RequireAuth><InterLinkage /></RequireAuth>} />
         <Route path="/survival-planner" element={<RequireAuth><SurvivalPlanner /></RequireAuth>} />
+        <Route path="/music" element={<RequireAuth><Music /></RequireAuth>} />
+        <Route path="/quiz" element={<RequireAuth><Quiz /></RequireAuth>} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
         <Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

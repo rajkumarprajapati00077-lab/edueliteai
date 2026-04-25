@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, MessageSquareCode, CalendarDays, User as UserIcon, Settings, FileText, Library, Network, Timer } from "lucide-react";
+import { LayoutDashboard, MessageSquareCode, CalendarDays, User as UserIcon, Settings, FileText, Library, Network, Timer, Music as MusicIcon, Brain } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { useStreak } from "@/hooks/useStreak";
 
@@ -11,6 +11,8 @@ const items = [
   { to: "/syllabus", icon: Library, label: "Syllabus Sheets" },
   { to: "/inter-linkage", icon: Network, label: "Inter-Linkage" },
   { to: "/survival-planner", icon: Timer, label: "Survival Planner" },
+  { to: "/quiz", icon: Brain, label: "Quizzes" },
+  { to: "/music", icon: MusicIcon, label: "Study Music" },
   { to: "/profile", icon: UserIcon, label: "Profile" },
   { to: "/settings", icon: Settings, label: "Settings" },
 ];
