@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Brain, Loader2, CheckCircle2, XCircle, Sparkles, ScrollText } from "lucide-react";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
+import { MobileNav } from "@/components/MobileNav";
 import { PageTransition } from "@/components/PageTransition";
 import { SYLLABUS } from "@/data/syllabus";
 import { supabase } from "@/integrations/supabase/client";
@@ -70,6 +71,7 @@ const Quiz = () => {
     <PageTransition>
       <div className="flex min-h-screen w-full bg-background">
         <DashboardSidebar />
+        <MobileNav />
         <main className="flex-1 px-6 lg:px-10 py-8 max-w-5xl mx-auto w-full">
           <div className="flex items-center gap-3 mb-1">
             <Brain className="h-5 w-5 text-primary" />

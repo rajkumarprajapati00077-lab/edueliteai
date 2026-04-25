@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
+import { MobileNav } from "@/components/MobileNav";
 import { PageTransition } from "@/components/PageTransition";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -133,6 +134,7 @@ const Notes = () => {
     <PageTransition>
       <div className="flex min-h-screen w-full bg-background">
         <DashboardSidebar />
+        <MobileNav />
         <main className="flex-1 px-6 lg:px-10 py-8 max-w-6xl mx-auto w-full">
           <h1 className="font-display text-3xl font-bold tracking-tight">Notes Library</h1>
           <p className="text-sm text-muted-foreground mt-1">Browse chapter PDFs or generate fresh AI notes for any chapter.</p>

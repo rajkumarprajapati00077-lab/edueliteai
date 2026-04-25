@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
+import { MobileNav } from "@/components/MobileNav";
 import { Navbar } from "@/components/Navbar";
 import { PageTransition } from "@/components/PageTransition";
 
@@ -64,6 +65,7 @@ export default function SurvivalPlanner() {
         <Navbar />
         <div className="flex flex-1">
           <DashboardSidebar />
+        <MobileNav />
           <main className="flex-1 px-4 md:px-10 py-8 max-w-5xl mx-auto w-full">
             <div className="mb-8">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-xs text-muted-foreground mb-3">
