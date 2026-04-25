@@ -246,6 +246,32 @@ const Field = ({ label, children }: { label: string; children: React.ReactNode }
   </label>
 );
 
+const ChapterChip = ({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) => (
+  <button
+    onClick={onClick}
+    className={`btn-3d rounded-full px-3 py-1 text-[11px] border transition-colors ${
+      active
+        ? "bg-primary/15 border-primary text-foreground"
+        : "border-border hover:border-primary/50 text-muted-foreground hover:text-foreground"
+    }`}
+  >
+    {children}
+  </button>
+);
+
+const SourceLink = ({ label, href }: { label: string; href: string }) => (
+  <a
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="btn-3d inline-flex items-center gap-1.5 rounded-full border border-border hover:border-primary/60 px-3 py-1.5 text-[11px] text-muted-foreground hover:text-foreground bg-background/40"
+  >
+    <Globe className="h-3 w-3" />
+    {label}
+    <ExternalLink className="h-3 w-3 opacity-60" />
+  </a>
+);
+
 const QCard = ({
   q, qKey, picked, setPicked, submitted, index,
 }: {
