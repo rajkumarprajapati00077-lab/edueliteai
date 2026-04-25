@@ -1,34 +1,45 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
+import { lazy, Suspense } from "react";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import Index from "./pages/Index.tsx";
-import Dashboard from "./pages/Dashboard.tsx";
-import Chat from "./pages/Chat.tsx";
-import NotFound from "./pages/NotFound.tsx";
-import Auth from "./pages/Auth.tsx";
-import Profile from "./pages/Profile.tsx";
-import Settings from "./pages/Settings.tsx";
-import StudyCalendar from "./pages/Calendar.tsx";
-import Syllabus from "./pages/Syllabus.tsx";
-import InterLinkage from "./pages/InterLinkage.tsx";
-import SurvivalPlanner from "./pages/SurvivalPlanner.tsx";
 import { AuthProvider } from "./contexts/AuthContext";
 import { RequireAuth } from "./components/RequireAuth";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import Notes from "./pages/Notes.tsx";
-import Music from "./pages/Music.tsx";
-import Quiz from "./pages/Quiz.tsx";
-import ResetPassword from "./pages/ResetPassword.tsx";
+
+// Eagerly load the landing page (above-the-fold) to keep first paint fast,
+// lazy-load every other route to slash the initial JS bundle.
+import Index from "./pages/Index.tsx";
+const Dashboard = lazy(() => import("./pages/Dashboard.tsx"));
+const Chat = lazy(() => import("./pages/Chat.tsx"));
+const NotFound = lazy(() => import("./pages/NotFound.tsx"));
+const Auth = lazy(() => import("./pages/Auth.tsx"));
+const Profile = lazy(() => import("./pages/Profile.tsx"));
+const Settings = lazy(() => import("./pages/Settings.tsx"));
+const StudyCalendar = lazy(() => import("./pages/Calendar.tsx"));
+const Syllabus = lazy(() => import("./pages/Syllabus.tsx"));
+const InterLinkage = lazy(() => import("./pages/InterLinkage.tsx"));
+const SurvivalPlanner = lazy(() => import("./pages/SurvivalPlanner.tsx"));
+const Notes = lazy(() => import("./pages/Notes.tsx"));
+const Music = lazy(() => import("./pages/Music.tsx"));
+const Quiz = lazy(() => import("./pages/Quiz.tsx"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword.tsx"));
 
 const queryClient = new QueryClient();
+
+const RouteFallback = () => (
+  <div className="min-h-screen grid place-items-center text-muted-foreground text-sm">
+    Loading…
+  </div>
+);
 
 const AnimatedRoutes = () => {
   const location = useLocation();
   return (
     <AnimatePresence mode="wait">
+      <Suspense fallback={<RouteFallback />}>
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Index />} />
         <Route path="/auth" element={<Auth />} />
@@ -47,6 +58,7 @@ const AnimatedRoutes = () => {
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
+      </Suspense>
     </AnimatePresence>
   );
 };
