@@ -1,4 +1,5 @@
 import { DashboardSidebar } from "@/components/DashboardSidebar";
+import { MobileNav } from "@/components/MobileNav";
 import { PageTransition } from "@/components/PageTransition";
 import { Target, Palette, Timer, Check, CalendarIcon, Wand2 } from "lucide-react";
 import { toast } from "sonner";
@@ -20,6 +21,7 @@ const Settings = () => {
       <PageTransition>
         <div className="flex min-h-screen w-full bg-background">
           <DashboardSidebar />
+        <MobileNav />
           <main className="flex-1 px-6 lg:px-10 py-8"><p className="text-sm text-muted-foreground">Loading…</p></main>
         </div>
       </PageTransition>
@@ -47,6 +49,7 @@ const Settings = () => {
     <PageTransition>
       <div className="flex min-h-screen w-full bg-background">
         <DashboardSidebar />
+        <MobileNav />
         <main className="flex-1 px-6 lg:px-10 py-8 max-w-3xl mx-auto w-full">
           <h1 className="font-display text-3xl font-bold tracking-tight">Settings</h1>
           <p className="text-sm text-muted-foreground mt-1">Tune EduElite to your study style. Account &amp; sign-in details live on the <a href="/profile" className="underline">Profile</a> page.</p>

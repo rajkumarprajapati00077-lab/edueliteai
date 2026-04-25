@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { format, addDays, startOfWeek, isSameDay, parseISO } from "date-fns";
 import { CheckCircle2, Circle, Plus, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
+import { MobileNav } from "@/components/MobileNav";
 import { PageTransition } from "@/components/PageTransition";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -73,6 +74,7 @@ const StudyCalendar = () => {
     <PageTransition>
       <div className="flex min-h-screen w-full bg-background">
         <DashboardSidebar />
+        <MobileNav />
         <main className="flex-1 px-6 lg:px-10 py-8 max-w-6xl mx-auto w-full">
           <div className="flex items-end justify-between flex-wrap gap-4">
             <div>

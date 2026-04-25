@@ -1,11 +1,12 @@
 import { ShieldCheck, Lock, GraduationCap } from "lucide-react";
+import { forwardRef } from "react";
 
 /**
  * Single source of truth for the privacy promise.
  * Rendered ONLY at the bottom of the landing page.
  */
-export const PrivacyNotice = ({ className = "" }: { className?: string }) => (
-  <div className={`glass-strong rounded-3xl p-6 md:p-8 shadow-3d ${className}`}>
+export const PrivacyNotice = forwardRef<HTMLDivElement, { className?: string }>(({ className = "" }, ref) => (
+  <div ref={ref} className={`glass-strong rounded-3xl p-6 md:p-8 shadow-3d ${className}`}>
     <div className="flex items-center gap-3">
       <div className="h-11 w-11 shrink-0 rounded-2xl bg-gradient-primary grid place-items-center glow-primary">
         <ShieldCheck className="h-5 w-5 text-primary-foreground" />
@@ -45,4 +46,5 @@ export const PrivacyNotice = ({ className = "" }: { className?: string }) => (
       </div>
     </div>
   </div>
-);
+));
+PrivacyNotice.displayName = "PrivacyNotice";

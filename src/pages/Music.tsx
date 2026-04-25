@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Music2, Play } from "lucide-react";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
+import { MobileNav } from "@/components/MobileNav";
 import { PageTransition } from "@/components/PageTransition";
 
 type Track = { title: string; ytId: string; by: string };
@@ -57,6 +58,7 @@ const Music = () => {
     <PageTransition>
       <div className="flex min-h-screen w-full bg-background">
         <DashboardSidebar />
+        <MobileNav />
         <main className="flex-1 px-6 lg:px-10 py-8 max-w-6xl mx-auto w-full">
           <div className="flex items-center gap-3 mb-1">
             <Music2 className="h-5 w-5 text-primary" />

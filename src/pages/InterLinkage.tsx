@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
+import { MobileNav } from "@/components/MobileNav";
 import { Navbar } from "@/components/Navbar";
 import { PageTransition } from "@/components/PageTransition";
 
@@ -47,6 +48,7 @@ export default function InterLinkage() {
         <Navbar />
         <div className="flex flex-1">
           <DashboardSidebar />
+        <MobileNav />
           <main className="flex-1 px-4 md:px-10 py-8 max-w-6xl mx-auto w-full">
             <div className="mb-8">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-xs text-muted-foreground mb-3">

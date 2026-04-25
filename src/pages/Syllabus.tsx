@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BookOpen, GraduationCap, Layers, ChevronRight, Library, ArrowLeft, Sparkles, Loader2 } from "lucide-react";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
+import { MobileNav } from "@/components/MobileNav";
 import { PageTransition } from "@/components/PageTransition";
 import { SYLLABUS, type Course, type Subject, type Chapter, type Level } from "@/data/syllabus";
 import { supabase } from "@/integrations/supabase/client";
@@ -39,6 +40,7 @@ const Syllabus = () => {
     <PageTransition>
       <div className="flex min-h-screen w-full bg-background">
         <DashboardSidebar />
+        <MobileNav />
         <main className="flex-1 px-6 lg:px-10 py-8 max-w-6xl mx-auto w-full">
           <Header view={view} setView={setView} course={course} level={level} subject={subject} chapter={chapter} />
 

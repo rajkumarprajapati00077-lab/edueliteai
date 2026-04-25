@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle2, Circle, Flame, BookOpen, Sparkles, TrendingUp, Plus } from "lucide-react";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
+import { MobileNav } from "@/components/MobileNav";
 import { CountdownRing } from "@/components/CountdownRing";
 import { PageTransition } from "@/components/PageTransition";
 import { useProfile } from "@/hooks/useProfile";
@@ -89,8 +90,9 @@ const Dashboard = () => {
     <PageTransition>
       <div className="flex min-h-screen w-full bg-background">
         <DashboardSidebar />
+        <MobileNav />
 
-        <main className="flex-1 px-6 lg:px-10 py-8 max-w-7xl mx-auto w-full">
+        <main className="flex-1 px-6 lg:px-10 py-8 pt-20 lg:pt-8 max-w-7xl mx-auto w-full">
           <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
             <div>
               <p className="text-sm text-muted-foreground">Good evening, {profile?.display_name ?? "Student"} 👋</p>
