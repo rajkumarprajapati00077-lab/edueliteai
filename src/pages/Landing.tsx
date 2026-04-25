@@ -1,5 +1,20 @@
 import { motion } from "framer-motion";
-import { Brain, Languages, ScrollText, ArrowRight, CheckCircle2, FileText } from "lucide-react";
+import {
+  Brain,
+  Languages,
+  ArrowRight,
+  CheckCircle2,
+  FileText,
+  CalendarDays,
+  BookOpen,
+  Music as MusicIcon,
+  ListChecks,
+  Network,
+  LifeBuoy,
+  MessageCircle,
+  UserCircle2,
+  Settings as SettingsIcon,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { HeroVisual } from "@/components/HeroVisual";
@@ -30,6 +45,19 @@ const features = [
     bullets: ["Chapter PDFs by course / subject", "AI-generated chapter notes", "One-tap PDF download"],
     accent: "from-primary to-accent",
   },
+];
+
+const services = [
+  { icon: BookOpen,    to: "/syllabus",         title: "Detailed Syllabus",        desc: "Drill-down chapter view across CA / CS / CMA with AI summary of every chapter." },
+  { icon: ListChecks,  to: "/quiz",             title: "Chapter MCQ Quizzes",      desc: "AI-generated MCQs per chapter with linked official ICAI / ICSI / ICMAI sources." },
+  { icon: FileText,    to: "/notes",            title: "Notes Library + AI PDFs",  desc: "Browse chapter notes or generate a polished PDF for any topic instantly." },
+  { icon: MessageCircle, to: "/chat",           title: "AI Tutor (Hindi/English)", desc: "Ask in Hindi, get exam-grade English answers with sections and case laws." },
+  { icon: CalendarDays, to: "/calendar",        title: "Study Calendar",           desc: "Plan tonight's targets, track streaks, and visualise weekly progress." },
+  { icon: Network,     to: "/inter-linkage",    title: "Subject Inter-Linkage",    desc: "See how Tax, Law, FR, Audit and Costing concepts connect across papers." },
+  { icon: LifeBuoy,    to: "/survival-planner", title: "Exam Survival Planner",    desc: "Last-30-days revision plan auto-built from your pending backlog." },
+  { icon: MusicIcon,   to: "/music",            title: "Focus Music Library",      desc: "Curated peaceful instrumentals & lo-fi to lock you into deep work." },
+  { icon: UserCircle2, to: "/profile",          title: "Profile & Recovery",       desc: "Manage display name, exam track, attempt date and recovery email." },
+  { icon: SettingsIcon,to: "/settings",         title: "Settings & Privacy",       desc: "Theme, daily goal, password reset and account-private data controls." },
 ];
 
 const Landing = () => {
@@ -132,6 +160,40 @@ const Landing = () => {
                     ))}
                   </ul>
                 </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ALL SERVICES */}
+        <section className="relative py-20" id="services" aria-label="All EduElite services">
+          <div className="mx-auto max-w-6xl px-6">
+            <div className="text-center mb-12">
+              <h2 className="font-display text-3xl md:text-4xl font-bold tracking-tight">
+                Everything you get inside <span className="text-gradient">EduElite</span>
+              </h2>
+              <p className="mt-3 text-muted-foreground max-w-2xl mx-auto">
+                Ten purpose-built tools, one focused workspace. Tap any service to jump straight in.
+              </p>
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {services.map((s) => (
+                <Link
+                  key={s.to}
+                  to={user ? s.to : "/auth"}
+                  className="group relative rounded-2xl glass-strong p-5 btn-3d hover:border-primary/40 transition-colors flex gap-4"
+                >
+                  <div className="h-11 w-11 shrink-0 rounded-xl bg-gradient-primary grid place-items-center glow-primary">
+                    <s.icon className="h-5 w-5 text-primary-foreground" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-display font-semibold">{s.title}</h3>
+                      <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:translate-x-0.5 group-hover:text-primary transition-transform" />
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{s.desc}</p>
+                  </div>
+                </Link>
               ))}
             </div>
           </div>
