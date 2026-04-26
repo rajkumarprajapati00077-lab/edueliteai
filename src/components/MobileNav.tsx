@@ -1,10 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X, LayoutDashboard, MessageSquareCode, CalendarDays, User as UserIcon, Settings, FileText, Library, Network, Timer, Music as MusicIcon, Brain } from "lucide-react";
+import { Menu, X, LayoutDashboard, MessageSquareCode, CalendarDays, User as UserIcon, Settings, FileText, Library, Network, Timer, Music as MusicIcon, Brain, Headphones, Sparkles } from "lucide-react";
 
 const items = [
   { to: "/dashboard", icon: LayoutDashboard, label: "Overview" },
   { to: "/chat", icon: MessageSquareCode, label: "AI Tutor" },
+  { to: "/ai-tools", icon: Sparkles, label: "AI Tools Hub" },
+  { to: "/audiobooks", icon: Headphones, label: "Audiobook Library" },
   { to: "/calendar", icon: CalendarDays, label: "Study Calendar" },
   { to: "/notes", icon: FileText, label: "Notes Library" },
   { to: "/syllabus", icon: Library, label: "Syllabus Sheets" },
