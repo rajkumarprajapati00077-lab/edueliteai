@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -6,18 +7,45 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
+async function requireUser(req: Request): Promise<Response | null> {
+  const authHeader = req.headers.get("Authorization") ?? "";
+  if (!authHeader.startsWith("Bearer ")) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+  const token = authHeader.slice("Bearer ".length);
+  const supa = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!);
+  const { data, error } = await supa.auth.getUser(token);
+  if (error || !data?.user) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+  return null;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
+    const unauth = await requireUser(req);
+    if (unauth) return unauth;
+
     const { course, level, subject, chapter, topics } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
 
-    if (!course || !level || !subject || !chapter) {
+    const isStr = (v: unknown, max: number) => typeof v === "string" && v.length > 0 && v.length <= max;
+    if (!isStr(course, 50) || !isStr(level, 50) || !isStr(subject, 200) || !isStr(chapter, 300)) {
       return new Response(JSON.stringify({ error: "Missing required fields" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    if (topics !== undefined && (!Array.isArray(topics) || topics.length > 50 || topics.some((t) => typeof t !== "string" || t.length > 200))) {
+      return new Response(JSON.stringify({ error: "Invalid topics" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
