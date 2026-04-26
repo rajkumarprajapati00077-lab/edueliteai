@@ -26,6 +26,8 @@ const Notes = lazy(() => import("./pages/Notes.tsx"));
 const Music = lazy(() => import("./pages/Music.tsx"));
 const Quiz = lazy(() => import("./pages/Quiz.tsx"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword.tsx"));
+const AudiobookLibrary = lazy(() => import("./pages/AudiobookLibrary.tsx"));
+const AIToolsHub = lazy(() => import("./pages/AIToolsHub.tsx"));
 
 const queryClient = new QueryClient();
 
@@ -52,6 +54,8 @@ const AnimatedRoutes = () => {
         <Route path="/survival-planner" element={<RequireAuth><SurvivalPlanner /></RequireAuth>} />
         <Route path="/music" element={<RequireAuth><Music /></RequireAuth>} />
         <Route path="/quiz" element={<RequireAuth><Quiz /></RequireAuth>} />
+        <Route path="/audiobooks" element={<RequireAuth><AudiobookLibrary /></RequireAuth>} />
+        <Route path="/ai-tools" element={<RequireAuth><AIToolsHub /></RequireAuth>} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
         <Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />
