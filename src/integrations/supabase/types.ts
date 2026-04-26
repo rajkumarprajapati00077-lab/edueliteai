@@ -14,6 +14,104 @@ export type Database = {
   }
   public: {
     Tables: {
+      audiobook_progress: {
+        Row: {
+          audiobook_id: string
+          bookmarks: Json
+          id: string
+          position_seconds: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          audiobook_id: string
+          bookmarks?: Json
+          id?: string
+          position_seconds?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          audiobook_id?: string
+          bookmarks?: Json
+          id?: string
+          position_seconds?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audiobook_progress_audiobook_id_fkey"
+            columns: ["audiobook_id"]
+            isOneToOne: false
+            referencedRelation: "audiobooks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      audiobooks: {
+        Row: {
+          audio_path: string | null
+          chapter: string
+          course: string
+          created_at: string
+          duration_seconds: number | null
+          error: string | null
+          id: string
+          key_points: Json | null
+          language: string | null
+          level: string
+          source_pdf_path: string | null
+          status: string
+          subject: string
+          summary: string | null
+          title: string
+          updated_at: string
+          user_id: string
+          voice: string | null
+        }
+        Insert: {
+          audio_path?: string | null
+          chapter?: string
+          course?: string
+          created_at?: string
+          duration_seconds?: number | null
+          error?: string | null
+          id?: string
+          key_points?: Json | null
+          language?: string | null
+          level?: string
+          source_pdf_path?: string | null
+          status?: string
+          subject?: string
+          summary?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+          voice?: string | null
+        }
+        Update: {
+          audio_path?: string | null
+          chapter?: string
+          course?: string
+          created_at?: string
+          duration_seconds?: number | null
+          error?: string | null
+          id?: string
+          key_points?: Json | null
+          language?: string | null
+          level?: string
+          source_pdf_path?: string | null
+          status?: string
+          subject?: string
+          summary?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+          voice?: string | null
+        }
+        Relationships: []
+      }
       conversations: {
         Row: {
           created_at: string
