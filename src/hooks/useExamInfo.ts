@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export type NewsItem = { title: string; date?: string; summary: string; url?: string };
 export type ExamInfo = {
@@ -45,9 +46,15 @@ export const useExamInfo = (exam: string | undefined) => {
     const run = async () => {
       setLoading(true); setError(null);
       try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const token = sessionData.session?.access_token;
+        if (!token) {
+          if (!cancelled) { setLoading(false); }
+          return; // not signed in — skip
+        }
         const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/exam-info?exam=${encodeURIComponent(exam)}`;
         const r = await fetch(url, {
-          headers: { Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` },
+          headers: { Authorization: `Bearer ${token}` },
         });
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         const json = (await r.json()) as ExamInfo;

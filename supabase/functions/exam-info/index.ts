@@ -1,10 +1,30 @@
 // Pulls live exam date + news for ICAI / ICSI / ICMAI using Firecrawl, then has
 // Lovable AI distill it into a clean JSON payload the dashboard can render.
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
+
+async function requireUser(req: Request): Promise<Response | null> {
+  const authHeader = req.headers.get("Authorization") ?? "";
+  if (!authHeader.startsWith("Bearer ")) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+  const token = authHeader.slice("Bearer ".length);
+  const supa = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!);
+  const { data, error } = await supa.auth.getUser(token);
+  if (error || !data?.user) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+  return null;
+}
 
 const SOURCES: Record<string, { label: string; urls: string[] }> = {
   CA: {
@@ -130,8 +150,17 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
+    const unauth = await requireUser(req);
+    if (unauth) return unauth;
+
     const url = new URL(req.url);
-    const exam = url.searchParams.get("exam") ?? "CA Final";
+    const examRaw = url.searchParams.get("exam") ?? "CA Final";
+    const exam = examRaw.slice(0, 100).replace(/[^\w\s().-]/g, "");
+    if (!exam) {
+      return new Response(JSON.stringify({ error: "Invalid exam" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     const track = trackForExam(exam);
 
     const cacheKey = `${track}::${exam}`;

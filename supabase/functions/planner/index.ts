@@ -1,8 +1,28 @@
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
+
+async function requireUser(req: Request): Promise<Response | null> {
+  const authHeader = req.headers.get("Authorization") ?? "";
+  if (!authHeader.startsWith("Bearer ")) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+  const token = authHeader.slice("Bearer ".length);
+  const supa = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!);
+  const { data, error } = await supa.auth.getUser(token);
+  if (error || !data?.user) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+  return null;
+}
 
 const SYSTEM = `You are a ruthless, pragmatic study coach for Indian CA/CS/CMA students facing an exam in 36 hours.
 Build a brutally realistic 1.5-day (36 hour) timeline starting from the supplied currentTime. Prioritise the weakChapters first, schedule short breaks (10–15 min) every 90–120 min of study, include 2 proper sleep blocks (~6h + a power nap), meals, and one final "fast revision + formula sheet" block in the last 3 hours.
@@ -12,9 +32,20 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
+    const unauth = await requireUser(req);
+    if (unauth) return unauth;
+
     const { subject, currentTime, weakChapters } = await req.json();
-    if (!subject || !currentTime) {
+    if (
+      typeof subject !== "string" || subject.length === 0 || subject.length > 200 ||
+      typeof currentTime !== "string" || currentTime.length > 100
+    ) {
       return new Response(JSON.stringify({ error: "subject and currentTime are required" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    if (weakChapters !== undefined && !Array.isArray(weakChapters) && typeof weakChapters !== "string") {
+      return new Response(JSON.stringify({ error: "Invalid weakChapters" }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
