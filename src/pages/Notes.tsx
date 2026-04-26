@@ -5,7 +5,7 @@ import { PageTransition } from "@/components/PageTransition";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-import { FileText, Upload, Sparkles, Download, Trash2, Loader2 } from "lucide-react";
+import { FileText, Upload, Sparkles, Download, Trash2, Loader2, Lock, User as UserIcon, Users } from "lucide-react";
 import { buildNotesPdf } from "@/lib/notesPdf";
 
 type Note = {
@@ -43,6 +43,7 @@ const Notes = () => {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [generatingId, setGeneratingId] = useState<string | null>(null);
+  const [ownerScope, setOwnerScope] = useState<"mine" | "all">("mine");
 
   const load = async () => {
     setLoading(true);
@@ -115,10 +116,20 @@ const Notes = () => {
     }
   };
 
+  const canAccess = (n: Note) => !n.is_private || n.uploaded_by === user?.id;
+
   const download = async (n: Note) => {
     if (!n.file_path) return;
-    const { data } = await supabase.storage.from("notes").createSignedUrl(n.file_path, 300);
-    if (data?.signedUrl) window.open(data.signedUrl, "_blank");
+    if (!canAccess(n)) {
+      toast.error("This note is private to its owner.");
+      return;
+    }
+    const { data, error } = await supabase.storage.from("notes").createSignedUrl(n.file_path, 300);
+    if (error || !data?.signedUrl) {
+      toast.error("You don't have access to this file.");
+      return;
+    }
+    window.open(data.signedUrl, "_blank");
   };
 
   const remove = async (n: Note) => {
@@ -128,7 +139,11 @@ const Notes = () => {
     setNotes((x) => x.filter((m) => m.id !== n.id));
   };
 
-  const filtered = notes.filter((n) => n.course === course && n.level === level);
+  const filtered = notes.filter((n) =>
+    n.course === course &&
+    n.level === level &&
+    (ownerScope === "all" || n.uploaded_by === user?.id)
+  );
 
   return (
     <PageTransition>
@@ -198,25 +213,75 @@ const Notes = () => {
               <div className="flex items-center gap-2 mb-4">
                 <FileText className="h-4 w-4 text-primary" />
                 <h2 className="font-semibold">{course} · {level}</h2>
-                <span className="text-xs text-muted-foreground ml-auto">{filtered.length} notes</span>
+                <div className="ml-auto flex items-center gap-1 rounded-full glass p-0.5 text-[11px]">
+                  <button
+                    type="button"
+                    onClick={() => setOwnerScope("mine")}
+                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full transition ${
+                      ownerScope === "mine" ? "bg-primary/20 text-primary" : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <UserIcon className="h-3 w-3" /> Mine
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setOwnerScope("all")}
+                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full transition ${
+                      ownerScope === "all" ? "bg-primary/20 text-primary" : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <Users className="h-3 w-3" /> All shared
+                  </button>
+                  <span className="px-2 text-muted-foreground">{filtered.length}</span>
+                </div>
               </div>
               {loading ? <p className="text-sm text-muted-foreground">Loading…</p> : filtered.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No notes yet for this filter. Upload one or generate with AI.</p>
+                <p className="text-sm text-muted-foreground">
+                  {ownerScope === "mine"
+                    ? "You haven't added any notes for this filter yet. Upload one or generate with AI."
+                    : "No shared notes for this filter."}
+                </p>
               ) : (
                 <ul className="space-y-2">
-                  {filtered.map((n) => (
-                    <li key={n.id} className="flex items-center gap-3 p-3 rounded-xl border border-border/50 bg-card/40">
-                      <div className="h-9 w-9 rounded-lg bg-secondary grid place-items-center"><FileText className="h-4 w-4 text-primary" /></div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{n.title}</p>
-                        <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{n.subject} · {n.chapter}{n.is_ai_generated ? " · AI" : ""}</p>
-                      </div>
-                      <button onClick={() => download(n)} className="text-muted-foreground hover:text-primary"><Download className="h-4 w-4" /></button>
-                      {n.uploaded_by === user?.id && (
-                        <button onClick={() => remove(n)} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-4 w-4" /></button>
-                      )}
-                    </li>
-                  ))}
+                  {filtered.map((n) => {
+                    const accessible = canAccess(n);
+                    const mine = n.uploaded_by === user?.id;
+                    return (
+                      <li
+                        key={n.id}
+                        className={`flex items-center gap-3 p-3 rounded-xl border bg-card/40 ${
+                          accessible ? "border-border/50" : "border-border/30 opacity-60"
+                        }`}
+                      >
+                        <div className="h-9 w-9 rounded-lg bg-secondary grid place-items-center">
+                          {accessible ? <FileText className="h-4 w-4 text-primary" /> : <Lock className="h-4 w-4 text-muted-foreground" />}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate flex items-center gap-1.5">
+                            {n.title}
+                            {n.is_private && <Lock className="h-3 w-3 text-muted-foreground shrink-0" />}
+                          </p>
+                          <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                            {n.subject} · {n.chapter}
+                            {n.is_ai_generated ? " · AI" : ""}
+                            {!mine && " · shared"}
+                            {!accessible && " · inaccessible"}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => download(n)}
+                          disabled={!accessible}
+                          title={accessible ? "Download" : "Private to its owner"}
+                          className="text-muted-foreground hover:text-primary disabled:opacity-40 disabled:cursor-not-allowed"
+                        >
+                          <Download className="h-4 w-4" />
+                        </button>
+                        {mine && (
+                          <button onClick={() => remove(n)} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-4 w-4" /></button>
+                        )}
+                      </li>
+                    );
+                  })}
                 </ul>
               )}
             </div>
