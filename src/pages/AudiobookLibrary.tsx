@@ -263,7 +263,7 @@ const AudiobookLibrary = () => {
       .from("audiobooks")
       .select("*")
       .order("created_at", { ascending: false });
-    setBooks((data ?? []) as Audiobook[]);
+    setBooks(((data ?? []) as unknown) as Audiobook[]);
     setLoading(false);
   };
 
