@@ -7,30 +7,56 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
+// Curated multilingual ElevenLabs voices.
+// All four work with eleven_multilingual_v2; the *_multi voices handle
+// Hindi / Hinglish (Devanagari + Latin script) more naturally.
 const VOICE_MAP: Record<string, string> = {
-  female: "EXAVITQu4vr4xnSDxMaL", // Sarah - warm female teacher
-  male: "JBFqnCBsd6RMkjVDRZzb",   // George - warm male teacher
-  female_in: "XrExE9yKIg1WjnnlVkGX", // Matilda - friendly
-  male_in: "onwK4e9ZLuTAKqWW03F9",   // Daniel - clear narrator
+  female_en: "EXAVITQu4vr4xnSDxMaL", // Sarah - warm English teacher
+  male_en: "JBFqnCBsd6RMkjVDRZzb",   // George - warm English narrator
+  female_multi: "XrExE9yKIg1WjnnlVkGX", // Matilda - multilingual, handles Hindi
+  male_multi: "onwK4e9ZLuTAKqWW03F9",   // Daniel - multilingual narrator
 };
 
 function pickVoice(voice: string | undefined, language: string | undefined) {
-  const isHindi = (language || "").toLowerCase().startsWith("hi");
-  if (voice === "male") return isHindi ? VOICE_MAP.male_in : VOICE_MAP.male;
-  return isHindi ? VOICE_MAP.female_in : VOICE_MAP.female;
+  const lang = (language || "en").toLowerCase();
+  // Hindi OR bilingual (Hinglish) → multilingual-tuned voice
+  const needsMulti = lang === "hi" || lang.startsWith("bi") || lang === "hinglish";
+  if (voice === "male") return needsMulti ? VOICE_MAP.male_multi : VOICE_MAP.male_en;
+  return needsMulti ? VOICE_MAP.female_multi : VOICE_MAP.female_en;
 }
 
-async function aiSummarize(pdfBase64: string, language: string) {
+type Section = {
+  heading: string;
+  bullets: string[];
+  narration: string;
+  start_seconds?: number;
+};
+type AiResult = {
+  title: string;
+  summary: string;
+  key_points: string[];
+  sections: Section[];
+};
+
+async function aiSummarize(pdfBase64: string, language: string): Promise<AiResult> {
   const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
   if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY missing");
 
-  const sys = `You are a top CA/CS/CMA teacher creating an audiobook script for an Indian student.
-Produce JSON via the provided tool. The narration_script must:
-- Sound like a real teacher explaining live in class (warm, expressive, natural)
-- Use simple words and frequent pauses (use commas and full stops naturally)
-- Avoid sounding robotic or like reading; use rhetorical questions and small recaps
-- ${language === "hi" ? "Mix Hindi + English (Hinglish), default Hindi" : language === "bilingual" ? "Naturally mix Hindi and English (Hinglish) suitable for Indian CA/CS/CMA students" : "Use clear Indian-English"}
-- Length: 600-1200 words narration_script.`;
+  const langInstruction =
+    language === "hi"
+      ? "Write summary, bullets and narration in natural Hindi (Devanagari script). Keep technical CA/CS/CMA terms in English where standard."
+      : language === "bilingual" || language === "hinglish"
+      ? "Write in natural Hinglish (mix of Hindi in Devanagari script + English technical terms) the way an Indian CA teacher actually speaks in class. About 60% Hindi, 40% English keywords."
+      : "Write in clear, simple Indian English.";
+
+  const sys = `You are a top CA/CS/CMA teacher creating a STRUCTURED audiobook for an Indian student.
+You MUST call the build_audiobook tool. Rules:
+- ${langInstruction}
+- Break the chapter into 5-8 logical SECTIONS, each with a short heading, 3-6 bullet notes, and a narration paragraph.
+- Each section's narration should be 150-300 words, warm, conversational, with rhetorical questions, small recaps, real-world CA examples, and natural pauses (use commas and periods).
+- TOTAL narration across all sections: 1500-2500 words.
+- Avoid robotic or textbook reading. Sound like a live class.
+- Do NOT include markdown, asterisks, or symbols in narration — only spoken text.`;
 
   const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
@@ -39,13 +65,13 @@ Produce JSON via the provided tool. The narration_script must:
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "google/gemini-2.5-flash",
+      model: "google/gemini-2.5-pro",
       messages: [
         { role: "system", content: sys },
         {
           role: "user",
           content: [
-            { type: "text", text: "Summarize this study PDF chapter-wise into a teaching audiobook." },
+            { type: "text", text: "Turn this study PDF into a structured teaching audiobook with sections." },
             { type: "file", file: { filename: "doc.pdf", file_data: `data:application/pdf;base64,${pdfBase64}` } },
           ],
         },
@@ -55,16 +81,28 @@ Produce JSON via the provided tool. The narration_script must:
           type: "function",
           function: {
             name: "build_audiobook",
-            description: "Return summary, key points, and a teacher-style narration script.",
+            description: "Return a structured audiobook with sections, each having a heading, bullets and narration.",
             parameters: {
               type: "object",
               properties: {
                 title: { type: "string" },
-                summary: { type: "string", description: "3-5 paragraph chapter-wise summary" },
-                key_points: { type: "array", items: { type: "string" }, description: "8-15 important concepts/points" },
-                narration_script: { type: "string", description: "Spoken script for TTS, teacher tone" },
+                summary: { type: "string", description: "3-5 paragraph overall chapter summary" },
+                key_points: { type: "array", items: { type: "string" }, description: "8-15 most important concepts" },
+                sections: {
+                  type: "array",
+                  description: "5-8 sections covering the chapter",
+                  items: {
+                    type: "object",
+                    properties: {
+                      heading: { type: "string" },
+                      bullets: { type: "array", items: { type: "string" } },
+                      narration: { type: "string", description: "150-300 word spoken text for TTS" },
+                    },
+                    required: ["heading", "bullets", "narration"],
+                  },
+                },
               },
-              required: ["title", "summary", "key_points", "narration_script"],
+              required: ["title", "summary", "key_points", "sections"],
             },
           },
         },
@@ -80,71 +118,82 @@ Produce JSON via the provided tool. The narration_script must:
   const data = await resp.json();
   const args = data.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments;
   if (!args) throw new Error("AI returned no structured output");
-  return JSON.parse(args) as {
-    title: string;
-    summary: string;
-    key_points: string[];
-    narration_script: string;
-  };
+  const parsed = JSON.parse(args) as AiResult;
+  if (!parsed.sections || parsed.sections.length === 0) {
+    throw new Error("AI returned no sections");
+  }
+  return parsed;
 }
 
-async function tts(text: string, voiceId: string): Promise<Uint8Array> {
+async function ttsOne(text: string, voiceId: string, prev?: string, next?: string): Promise<Uint8Array> {
   const key = Deno.env.get("ELEVENLABS_API_KEY");
   if (!key) throw new Error("ELEVENLABS_API_KEY missing");
+  const r = await fetch(
+    `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_44100_128`,
+    {
+      method: "POST",
+      headers: { "xi-api-key": key, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        text,
+        model_id: "eleven_multilingual_v2",
+        previous_text: prev,
+        next_text: next,
+        voice_settings: {
+          stability: 0.4,
+          similarity_boost: 0.8,
+          style: 0.55,
+          use_speaker_boost: true,
+          speed: 1.0,
+        },
+      }),
+    }
+  );
+  if (!r.ok) {
+    const t = await r.text();
+    throw new Error(`ElevenLabs TTS failed ${r.status}: ${t}`);
+  }
+  return new Uint8Array(await r.arrayBuffer());
+}
 
-  // Chunk to keep each request fast & under limits
-  const chunks: string[] = [];
-  const sentences = text.replace(/\s+/g, " ").split(/(?<=[.!?])\s+/);
-  let cur = "";
-  for (const s of sentences) {
-    if ((cur + " " + s).length > 1800) {
-      if (cur) chunks.push(cur.trim());
-      cur = s;
-    } else {
-      cur = cur ? cur + " " + s : s;
+/** Generate TTS for each section in parallel (limited concurrency)
+ *  and return concatenated MP3 plus per-section start offsets (estimated). */
+async function ttsSections(
+  sections: Section[],
+  voiceId: string,
+): Promise<{ mp3: Uint8Array; sectionsWithTime: Section[]; totalSeconds: number }> {
+  const CONCURRENCY = 3;
+  const buffers: Uint8Array[] = new Array(sections.length);
+  let i = 0;
+  async function worker() {
+    while (true) {
+      const idx = i++;
+      if (idx >= sections.length) return;
+      const prev = sections[idx - 1]?.narration;
+      const next = sections[idx + 1]?.narration;
+      buffers[idx] = await ttsOne(sections[idx].narration, voiceId, prev, next);
     }
   }
-  if (cur.trim()) chunks.push(cur.trim());
+  await Promise.all(Array.from({ length: Math.min(CONCURRENCY, sections.length) }, worker));
 
-  const buffers: Uint8Array[] = [];
-  for (let i = 0; i < chunks.length; i++) {
-    const prev = chunks[i - 1];
-    const next = chunks[i + 1];
-    const r = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_44100_128`,
-      {
-        method: "POST",
-        headers: { "xi-api-key": key, "Content-Type": "application/json" },
-        body: JSON.stringify({
-          text: chunks[i],
-          model_id: "eleven_multilingual_v2",
-          previous_text: prev,
-          next_text: next,
-          voice_settings: {
-            stability: 0.45,
-            similarity_boost: 0.8,
-            style: 0.55,
-            use_speaker_boost: true,
-            speed: 1.0,
-          },
-        }),
-      }
-    );
-    if (!r.ok) {
-      const t = await r.text();
-      throw new Error(`ElevenLabs TTS failed ${r.status}: ${t}`);
-    }
-    buffers.push(new Uint8Array(await r.arrayBuffer()));
+  // Estimate duration of each MP3 chunk from its byte length.
+  // mp3_44100_128 ≈ 16,000 bytes/sec.
+  const BYTES_PER_SEC = 16000;
+  const sectionsWithTime: Section[] = [];
+  let runningSec = 0;
+  let totalLen = 0;
+  for (let idx = 0; idx < sections.length; idx++) {
+    const seconds = buffers[idx].length / BYTES_PER_SEC;
+    sectionsWithTime.push({ ...sections[idx], start_seconds: Math.floor(runningSec) });
+    runningSec += seconds;
+    totalLen += buffers[idx].length;
   }
-
-  const total = buffers.reduce((n, b) => n + b.length, 0);
-  const out = new Uint8Array(total);
-  let offset = 0;
+  const mp3 = new Uint8Array(totalLen);
+  let off = 0;
   for (const b of buffers) {
-    out.set(b, offset);
-    offset += b.length;
+    mp3.set(b, off);
+    off += b.length;
   }
-  return out;
+  return { mp3, sectionsWithTime, totalSeconds: Math.floor(runningSec) };
 }
 
 Deno.serve(async (req) => {
@@ -215,9 +264,9 @@ Deno.serve(async (req) => {
     if (insErr) throw insErr;
 
     try {
-      const summary = await aiSummarize(pdf_base64, language);
+      const ai = await aiSummarize(pdf_base64, language);
       const voiceId = pickVoice(voice, language);
-      const mp3 = await tts(summary.narration_script, voiceId);
+      const { mp3, sectionsWithTime, totalSeconds } = await ttsSections(ai.sections, voiceId);
 
       const path = `${user.id}/${row.id}.mp3`;
       const { error: upErr } = await admin.storage.from("audiobooks").upload(path, mp3, {
@@ -229,9 +278,11 @@ Deno.serve(async (req) => {
       await admin
         .from("audiobooks")
         .update({
-          title: title || summary.title,
-          summary: summary.summary,
-          key_points: summary.key_points,
+          title: title || ai.title,
+          summary: ai.summary,
+          key_points: ai.key_points,
+          sections: sectionsWithTime,
+          duration_seconds: totalSeconds,
           audio_path: path,
           status: "ready",
         })
