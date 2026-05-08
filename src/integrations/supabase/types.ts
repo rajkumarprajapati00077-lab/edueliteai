@@ -61,6 +61,7 @@ export type Database = {
           key_points: Json | null
           language: string | null
           level: string
+          sections: Json
           source_pdf_path: string | null
           status: string
           subject: string
@@ -81,6 +82,7 @@ export type Database = {
           key_points?: Json | null
           language?: string | null
           level?: string
+          sections?: Json
           source_pdf_path?: string | null
           status?: string
           subject?: string
@@ -101,6 +103,7 @@ export type Database = {
           key_points?: Json | null
           language?: string | null
           level?: string
+          sections?: Json
           source_pdf_path?: string | null
           status?: string
           subject?: string

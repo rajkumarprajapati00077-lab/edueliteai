@@ -7,8 +7,15 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import {
   Headphones, Upload, Loader2, Play, Pause, Bookmark, Download, Trash2,
-  Volume2, FileAudio, Sparkles,
+  Volume2, FileAudio, Sparkles, ListTree,
 } from "lucide-react";
+
+type Section = {
+  heading: string;
+  bullets: string[];
+  narration?: string;
+  start_seconds?: number;
+};
 
 type Audiobook = {
   id: string;
@@ -16,6 +23,7 @@ type Audiobook = {
   title: string;
   summary: string | null;
   key_points: string[] | null;
+  sections: Section[] | null;
   audio_path: string | null;
   voice: string | null;
   language: string | null;
@@ -49,6 +57,14 @@ const Player = ({ book }: { book: Audiobook }) => {
   const [pos, setPos] = useState(0);
   const [dur, setDur] = useState(0);
   const [bookmarks, setBookmarks] = useState<number[]>([]);
+  const [showNotes, setShowNotes] = useState(false);
+
+  const sections = (book.sections ?? []).filter((s) => s && s.heading);
+  const activeIdx = sections.findIndex((s, i) => {
+    const start = s.start_seconds ?? 0;
+    const next = sections[i + 1]?.start_seconds ?? Infinity;
+    return pos >= start && pos < next;
+  });
 
   useEffect(() => {
     if (!book.audio_path) return;
@@ -109,6 +125,12 @@ const Player = ({ book }: { book: Audiobook }) => {
     return `${m}:${ss.toString().padStart(2, "0")}`;
   };
 
+  const jumpTo = (sec: number) => {
+    if (!audioRef.current) return;
+    audioRef.current.currentTime = sec;
+    if (!playing) audioRef.current.play();
+  };
+
   if (!book.audio_path) return null;
 
   return (
@@ -161,6 +183,15 @@ const Player = ({ book }: { book: Audiobook }) => {
           <button onClick={addBookmark} className="h-9 w-9 rounded-lg hover:bg-secondary/60 grid place-items-center" title="Bookmark">
             <Bookmark className="h-4 w-4" />
           </button>
+          {sections.length > 0 && (
+            <button
+              onClick={() => setShowNotes((v) => !v)}
+              className={`h-9 w-9 rounded-lg grid place-items-center ${showNotes ? "bg-primary/20 text-primary" : "hover:bg-secondary/60"}`}
+              title="Sections & notes"
+            >
+              <ListTree className="h-4 w-4" />
+            </button>
+          )}
           {url && (
             <a href={url} download={`${book.title}.mp3`} className="h-9 w-9 rounded-lg hover:bg-secondary/60 grid place-items-center" title="Download">
               <Download className="h-4 w-4" />
@@ -178,6 +209,33 @@ const Player = ({ book }: { book: Audiobook }) => {
             >
               ⭐ {fmt(b)}
             </button>
+          ))}
+        </div>
+      )}
+
+      {showNotes && sections.length > 0 && (
+        <div className="rounded-xl bg-background/40 border border-border/50 p-3 space-y-3 max-h-96 overflow-y-auto">
+          <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Chapter sections — tap to jump</div>
+          {sections.map((s, i) => (
+            <div
+              key={i}
+              className={`rounded-lg p-3 border transition ${
+                i === activeIdx ? "border-primary/60 bg-primary/5" : "border-border/40 bg-secondary/20"
+              }`}
+            >
+              <button
+                onClick={() => jumpTo(s.start_seconds ?? 0)}
+                className="flex items-center justify-between w-full text-left"
+              >
+                <span className="text-sm font-semibold">{i + 1}. {s.heading}</span>
+                <span className="text-[11px] text-muted-foreground tabular-nums">▶ {fmt(s.start_seconds ?? 0)}</span>
+              </button>
+              {s.bullets && s.bullets.length > 0 && (
+                <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+                  {s.bullets.map((b, j) => <li key={j}>• {b}</li>)}
+                </ul>
+              )}
+            </div>
           ))}
         </div>
       )}
@@ -205,7 +263,7 @@ const AudiobookLibrary = () => {
       .from("audiobooks")
       .select("*")
       .order("created_at", { ascending: false });
-    setBooks((data ?? []) as Audiobook[]);
+    setBooks(((data ?? []) as unknown) as Audiobook[]);
     setLoading(false);
   };
 
