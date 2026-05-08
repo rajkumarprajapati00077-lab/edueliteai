@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import {
   Headphones, Upload, Loader2, Play, Pause, Bookmark, Download, Trash2,
-  Volume2, FileAudio, Sparkles, ListTree,
+  Volume2, FileAudio, Sparkles, ListTree, Languages, FileText, FileDown,
 } from "lucide-react";
 
 type Section = {
