@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import {
   Headphones, Upload, Loader2, Play, Pause, Bookmark, Download, Trash2,
-  Volume2, FileAudio, Sparkles, ListTree,
+  Volume2, FileAudio, Sparkles, ListTree, Languages, FileText, FileDown,
 } from "lucide-react";
 
 type Section = {
@@ -58,6 +58,11 @@ const Player = ({ book }: { book: Audiobook }) => {
   const [dur, setDur] = useState(0);
   const [bookmarks, setBookmarks] = useState<number[]>([]);
   const [showNotes, setShowNotes] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [bilingual, setBilingual] = useState<
+    { heading_en: string; heading_hi: string; bullets: { en: string; hi: string }[] }[] | null
+  >(null);
+  const [showExport, setShowExport] = useState(false);
 
   const sections = (book.sections ?? []).filter((s) => s && s.heading);
   const activeIdx = sections.findIndex((s, i) => {
@@ -131,6 +136,119 @@ const Player = ({ book }: { book: Audiobook }) => {
     if (!playing) audioRef.current.play();
   };
 
+  const ensureBilingual = async () => {
+    if (bilingual) return bilingual;
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) { toast.error("Please sign in"); return null; }
+    setExporting(true);
+    try {
+      const resp = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/bilingual-notes`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            title: book.title,
+            sections: sections.map((s) => ({ heading: s.heading, bullets: s.bullets ?? [] })),
+          }),
+        },
+      );
+      const data = await resp.json();
+      if (!resp.ok) throw new Error(data.error || "Failed to translate");
+      const out = Array.isArray(data?.sections) ? data.sections : [];
+      if (!out.length) throw new Error("Empty translation");
+      setBilingual(out);
+      return out;
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed");
+      return null;
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const downloadTxt = async () => {
+    const data = await ensureBilingual();
+    if (!data) return;
+    const lines: string[] = [];
+    lines.push(book.title);
+    lines.push("=".repeat(book.title.length));
+    lines.push("");
+    data.forEach((s, i) => {
+      lines.push(`${i + 1}. ${s.heading_en}  /  ${s.heading_hi}`);
+      lines.push("-".repeat(40));
+      s.bullets.forEach((b) => {
+        lines.push(`• EN: ${b.en}`);
+        lines.push(`  HI: ${b.hi}`);
+        lines.push("");
+      });
+      lines.push("");
+    });
+    const blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `${book.title} — bilingual notes.txt`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    setShowExport(false);
+    toast.success("Downloaded notes");
+  };
+
+  const downloadPdf = async () => {
+    const data = await ensureBilingual();
+    if (!data) return;
+    const esc = (s: string) =>
+      s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const html = `<!doctype html><html><head><meta charset="utf-8"/>
+<title>${esc(book.title)} — Bilingual Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&family=Noto+Sans+Devanagari:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4; margin: 18mm; }
+  body { font-family: 'Noto Sans', system-ui, sans-serif; color: #111; line-height: 1.45; }
+  h1 { font-size: 22px; margin: 0 0 6px; }
+  .meta { color: #666; font-size: 12px; margin-bottom: 18px; }
+  h2 { font-size: 15px; margin: 18px 0 6px; padding-bottom: 4px; border-bottom: 1px solid #ddd; }
+  .hi { font-family: 'Noto Sans Devanagari', 'Noto Sans', serif; }
+  ul { padding-left: 18px; margin: 4px 0 10px; }
+  li { margin: 4px 0; font-size: 12.5px; }
+  .label { color: #2563eb; font-weight: 700; margin-right: 4px; }
+  .label-hi { color: #b91c1c; }
+  @media print { .noprint { display: none; } }
+  .noprint { position: fixed; top: 12px; right: 12px; }
+  button { padding: 8px 14px; border-radius: 8px; border: 0; background: #111; color: #fff; cursor: pointer; }
+</style></head><body>
+<div class="noprint"><button onclick="window.print()">Print / Save as PDF</button></div>
+<h1>${esc(book.title)}</h1>
+<div class="meta">${esc(book.course)} · ${esc(book.level)} · ${esc(book.subject)} · ${esc(book.chapter)} — Bilingual study notes (English + हिन्दी)</div>
+${data
+  .map(
+    (s, i) => `
+<h2>${i + 1}. ${esc(s.heading_en)} <span class="hi">/ ${esc(s.heading_hi)}</span></h2>
+<ul>
+${s.bullets
+  .map(
+    (b) => `<li>
+  <span class="label">EN:</span>${esc(b.en)}<br/>
+  <span class="label label-hi">HI:</span><span class="hi">${esc(b.hi)}</span>
+</li>`,
+  )
+  .join("")}
+</ul>`,
+  )
+  .join("")}
+<script>setTimeout(()=>window.print(),600);</script>
+</body></html>`;
+    const w = window.open("", "_blank");
+    if (!w) { toast.error("Popup blocked — allow popups to export PDF"); return; }
+    w.document.open();
+    w.document.write(html);
+    w.document.close();
+    setShowExport(false);
+  };
+
   if (!book.audio_path) return null;
 
   return (
@@ -196,6 +314,38 @@ const Player = ({ book }: { book: Audiobook }) => {
             <a href={url} download={`${book.title}.mp3`} className="h-9 w-9 rounded-lg hover:bg-secondary/60 grid place-items-center" title="Download">
               <Download className="h-4 w-4" />
             </a>
+          )}
+          {sections.length > 0 && (
+            <div className="relative">
+              <button
+                onClick={() => setShowExport((v) => !v)}
+                disabled={exporting}
+                className="h-9 px-2 rounded-lg hover:bg-secondary/60 grid place-items-center gap-1 inline-flex text-xs disabled:opacity-50"
+                title="Export bilingual notes (EN + हिन्दी)"
+              >
+                {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Languages className="h-4 w-4" />}
+                <span className="hidden sm:inline">EN+हि</span>
+              </button>
+              {showExport && (
+                <div className="absolute right-0 top-10 z-20 w-56 rounded-xl glass-strong border border-border/50 p-1 shadow-xl">
+                  <div className="px-3 py-2 text-[11px] uppercase tracking-wider text-muted-foreground">
+                    Bilingual study notes
+                  </div>
+                  <button
+                    onClick={downloadPdf}
+                    className="w-full text-left px-3 py-2 rounded-lg hover:bg-secondary/60 text-sm inline-flex items-center gap-2"
+                  >
+                    <FileDown className="h-4 w-4 text-primary" /> Download as PDF
+                  </button>
+                  <button
+                    onClick={downloadTxt}
+                    className="w-full text-left px-3 py-2 rounded-lg hover:bg-secondary/60 text-sm inline-flex items-center gap-2"
+                  >
+                    <FileText className="h-4 w-4 text-primary" /> Download as text
+                  </button>
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>
