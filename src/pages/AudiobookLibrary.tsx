@@ -315,6 +315,38 @@ ${s.bullets
               <Download className="h-4 w-4" />
             </a>
           )}
+          {sections.length > 0 && (
+            <div className="relative">
+              <button
+                onClick={() => setShowExport((v) => !v)}
+                disabled={exporting}
+                className="h-9 px-2 rounded-lg hover:bg-secondary/60 grid place-items-center gap-1 inline-flex text-xs disabled:opacity-50"
+                title="Export bilingual notes (EN + हिन्दी)"
+              >
+                {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Languages className="h-4 w-4" />}
+                <span className="hidden sm:inline">EN+हि</span>
+              </button>
+              {showExport && (
+                <div className="absolute right-0 top-10 z-20 w-56 rounded-xl glass-strong border border-border/50 p-1 shadow-xl">
+                  <div className="px-3 py-2 text-[11px] uppercase tracking-wider text-muted-foreground">
+                    Bilingual study notes
+                  </div>
+                  <button
+                    onClick={downloadPdf}
+                    className="w-full text-left px-3 py-2 rounded-lg hover:bg-secondary/60 text-sm inline-flex items-center gap-2"
+                  >
+                    <FileDown className="h-4 w-4 text-primary" /> Download as PDF
+                  </button>
+                  <button
+                    onClick={downloadTxt}
+                    className="w-full text-left px-3 py-2 rounded-lg hover:bg-secondary/60 text-sm inline-flex items-center gap-2"
+                  >
+                    <FileText className="h-4 w-4 text-primary" /> Download as text
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
       {bookmarks.length > 0 && (
