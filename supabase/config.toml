@@ -16,6 +16,3 @@ verify_jwt = false
 
 [functions.quiz-generator]
 verify_jwt = false
-
-[functions.pdf-to-audio]
-verify_jwt = false
