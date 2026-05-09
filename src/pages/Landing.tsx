@@ -14,7 +14,6 @@ import {
   MessageCircle,
   UserCircle2,
   Settings as SettingsIcon,
-  Headphones,
   Sparkles,
 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -50,8 +49,7 @@ const features = [
 ];
 
 const services = [
-  { icon: Sparkles,    to: "/ai-tools",         title: "AI Tools Hub",             desc: "All AI features in one place — tutor, audiobooks, quizzes, notes, planner." },
-  { icon: Headphones,  to: "/audiobooks",       title: "PDF → Audiobook Library",  desc: "Upload PDF chapters, get teacher-style audio explanations in Hindi/English." },
+  { icon: Sparkles,    to: "/ai-tools",         title: "AI Tools Hub",             desc: "All AI features in one place — tutor, quizzes, notes, planner." },
   { icon: BookOpen,    to: "/syllabus",         title: "Detailed Syllabus",        desc: "Drill-down chapter view across CA / CS / CMA with AI summary of every chapter." },
   { icon: ListChecks,  to: "/quiz",             title: "Chapter MCQ Quizzes",      desc: "AI-generated MCQs per chapter with linked official ICAI / ICSI / ICMAI sources." },
   { icon: FileText,    to: "/notes",            title: "Notes Library + AI PDFs",  desc: "Browse chapter notes or generate a polished PDF for any topic instantly." },
