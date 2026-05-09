@@ -279,42 +279,53 @@ Deno.serve(async (req) => {
       .single();
     if (insErr) throw insErr;
 
-    try {
-      const ai = await aiSummarize(pdf_base64, language);
-      const voiceId = pickVoice(voice, language);
-      const { mp3, sectionsWithTime, totalSeconds } = await ttsSections(ai.sections, voiceId);
+    // Run AI + TTS + upload in the background so we don't hit edge timeouts.
+    // The client polls the audiobooks table for status.
+    const work = (async () => {
+      try {
+        const ai = await aiSummarize(pdf_base64, language);
+        const voiceId = pickVoice(voice, language);
+        const { mp3, sectionsWithTime, totalSeconds } = await ttsSections(ai.sections, voiceId);
 
-      const path = `${user.id}/${row.id}.mp3`;
-      const { error: upErr } = await admin.storage.from("audiobooks").upload(path, mp3, {
-        contentType: "audio/mpeg",
-        upsert: true,
-      });
-      if (upErr) throw upErr;
+        const path = `${user.id}/${row.id}.mp3`;
+        const { error: upErr } = await admin.storage.from("audiobooks").upload(path, mp3, {
+          contentType: "audio/mpeg",
+          upsert: true,
+        });
+        if (upErr) throw upErr;
 
-      await admin
-        .from("audiobooks")
-        .update({
-          title: title || ai.title,
-          summary: ai.summary,
-          key_points: ai.key_points,
-          sections: sectionsWithTime,
-          duration_seconds: totalSeconds,
-          audio_path: path,
-          status: "ready",
-        })
-        .eq("id", row.id);
+        await admin
+          .from("audiobooks")
+          .update({
+            title: title || ai.title,
+            summary: ai.summary,
+            key_points: ai.key_points,
+            sections: sectionsWithTime,
+            duration_seconds: totalSeconds,
+            audio_path: path,
+            status: "ready",
+          })
+          .eq("id", row.id);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e);
+        console.error("Background audiobook job failed:", msg);
+        await admin
+          .from("audiobooks")
+          .update({ status: "failed", error: msg.slice(0, 500) })
+          .eq("id", row.id);
+      }
+    })();
 
-      return new Response(JSON.stringify({ id: row.id, status: "ready" }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      await admin.from("audiobooks").update({ status: "failed", error: msg }).eq("id", row.id);
-      return new Response(JSON.stringify({ id: row.id, status: "failed", error: msg }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    // @ts-ignore EdgeRuntime is provided by Supabase Edge Runtime
+    if (typeof EdgeRuntime !== "undefined" && EdgeRuntime?.waitUntil) {
+      // @ts-ignore
+      EdgeRuntime.waitUntil(work);
     }
+
+    return new Response(
+      JSON.stringify({ id: row.id, status: "processing" }),
+      { status: 202, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     return new Response(JSON.stringify({ error: msg }), {
