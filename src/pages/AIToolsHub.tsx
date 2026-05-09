@@ -3,11 +3,10 @@ import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { MobileNav } from "@/components/MobileNav";
 import { PageTransition } from "@/components/PageTransition";
 import {
-  Headphones, MessageCircle, FileText, Brain, Network, LifeBuoy, Sparkles,
+  MessageCircle, FileText, Brain, Network, LifeBuoy, Sparkles,
 } from "lucide-react";
 
 const tools = [
-  { to: "/audiobooks",      icon: Headphones,    title: "PDF → Audiobook",      desc: "Upload any chapter PDF — get a teacher-style audio explanation in Hindi, English or Hinglish.", accent: "from-primary to-primary-glow" },
   { to: "/chat",            icon: MessageCircle, title: "AI Tutor",             desc: "Ask doubts in Hindi, get exam-grade English answers with sections & case laws.",         accent: "from-accent to-accent-glow" },
   { to: "/notes",           icon: FileText,      title: "AI Notes Generator",   desc: "Generate polished chapter PDFs in ICAI / ICSI / ICMAI style on demand.",                accent: "from-primary to-accent" },
   { to: "/quiz",            icon: Brain,         title: "AI Quiz Generator",    desc: "Auto-built MCQ quizzes for every chapter with linked official sources.",               accent: "from-emerald-500 to-teal-500" },
