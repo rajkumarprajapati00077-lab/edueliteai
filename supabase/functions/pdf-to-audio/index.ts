@@ -128,31 +128,47 @@ You MUST call the build_audiobook tool. Rules:
 async function ttsOne(text: string, voiceId: string, prev?: string, next?: string): Promise<Uint8Array> {
   const key = Deno.env.get("ELEVENLABS_API_KEY");
   if (!key) throw new Error("ELEVENLABS_API_KEY missing");
-  const r = await fetch(
-    `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_44100_128`,
-    {
-      method: "POST",
-      headers: { "xi-api-key": key, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        text,
-        model_id: "eleven_multilingual_v2",
-        previous_text: prev,
-        next_text: next,
-        voice_settings: {
-          stability: 0.4,
-          similarity_boost: 0.8,
-          style: 0.55,
-          use_speaker_boost: true,
-          speed: 1.0,
-        },
-      }),
+
+  // ElevenLabs has a per-request character cap (~5000 for multilingual_v2).
+  // Trim defensively so a long narration never 422s.
+  const MAX_CHARS = 4500;
+  const safeText = text.length > MAX_CHARS ? text.slice(0, MAX_CHARS) : text;
+  const safePrev = prev ? prev.slice(-800) : undefined;
+  const safeNext = next ? next.slice(0, 800) : undefined;
+
+  const body = {
+    text: safeText,
+    model_id: "eleven_multilingual_v2",
+    previous_text: safePrev,
+    next_text: safeNext,
+    // NOTE: do NOT send `speed` — not accepted on multilingual_v2 and causes 422.
+    voice_settings: {
+      stability: 0.45,
+      similarity_boost: 0.8,
+      style: 0.4,
+      use_speaker_boost: true,
+    },
+  };
+
+  let lastErr = "";
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const r = await fetch(
+      `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_44100_128`,
+      {
+        method: "POST",
+        headers: { "xi-api-key": key, "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      },
+    );
+    if (r.ok) return new Uint8Array(await r.arrayBuffer());
+    lastErr = await r.text();
+    // Retry only on transient errors
+    if (r.status !== 429 && r.status < 500) {
+      throw new Error(`ElevenLabs TTS ${r.status}: ${lastErr.slice(0, 300)}`);
     }
-  );
-  if (!r.ok) {
-    const t = await r.text();
-    throw new Error(`ElevenLabs TTS failed ${r.status}: ${t}`);
+    await new Promise((res) => setTimeout(res, 800 * (attempt + 1)));
   }
-  return new Uint8Array(await r.arrayBuffer());
+  throw new Error(`ElevenLabs TTS failed after retries: ${lastErr.slice(0, 300)}`);
 }
 
 /** Generate TTS for each section in parallel (limited concurrency)
@@ -263,42 +279,53 @@ Deno.serve(async (req) => {
       .single();
     if (insErr) throw insErr;
 
-    try {
-      const ai = await aiSummarize(pdf_base64, language);
-      const voiceId = pickVoice(voice, language);
-      const { mp3, sectionsWithTime, totalSeconds } = await ttsSections(ai.sections, voiceId);
+    // Run AI + TTS + upload in the background so we don't hit edge timeouts.
+    // The client polls the audiobooks table for status.
+    const work = (async () => {
+      try {
+        const ai = await aiSummarize(pdf_base64, language);
+        const voiceId = pickVoice(voice, language);
+        const { mp3, sectionsWithTime, totalSeconds } = await ttsSections(ai.sections, voiceId);
 
-      const path = `${user.id}/${row.id}.mp3`;
-      const { error: upErr } = await admin.storage.from("audiobooks").upload(path, mp3, {
-        contentType: "audio/mpeg",
-        upsert: true,
-      });
-      if (upErr) throw upErr;
+        const path = `${user.id}/${row.id}.mp3`;
+        const { error: upErr } = await admin.storage.from("audiobooks").upload(path, mp3, {
+          contentType: "audio/mpeg",
+          upsert: true,
+        });
+        if (upErr) throw upErr;
 
-      await admin
-        .from("audiobooks")
-        .update({
-          title: title || ai.title,
-          summary: ai.summary,
-          key_points: ai.key_points,
-          sections: sectionsWithTime,
-          duration_seconds: totalSeconds,
-          audio_path: path,
-          status: "ready",
-        })
-        .eq("id", row.id);
+        await admin
+          .from("audiobooks")
+          .update({
+            title: title || ai.title,
+            summary: ai.summary,
+            key_points: ai.key_points,
+            sections: sectionsWithTime,
+            duration_seconds: totalSeconds,
+            audio_path: path,
+            status: "ready",
+          })
+          .eq("id", row.id);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e);
+        console.error("Background audiobook job failed:", msg);
+        await admin
+          .from("audiobooks")
+          .update({ status: "failed", error: msg.slice(0, 500) })
+          .eq("id", row.id);
+      }
+    })();
 
-      return new Response(JSON.stringify({ id: row.id, status: "ready" }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      await admin.from("audiobooks").update({ status: "failed", error: msg }).eq("id", row.id);
-      return new Response(JSON.stringify({ id: row.id, status: "failed", error: msg }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    // @ts-ignore EdgeRuntime is provided by Supabase Edge Runtime
+    if (typeof EdgeRuntime !== "undefined" && EdgeRuntime?.waitUntil) {
+      // @ts-ignore
+      EdgeRuntime.waitUntil(work);
     }
+
+    return new Response(
+      JSON.stringify({ id: row.id, status: "processing" }),
+      { status: 202, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     return new Response(JSON.stringify({ error: msg }), {

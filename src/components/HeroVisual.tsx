@@ -13,18 +13,21 @@ export const HeroVisual = () => {
   const y3 = useTransform(scrollYProgress, [0, 1], [0, 80]);
 
   return (
-    <div ref={ref} className="relative w-full h-full pointer-events-none select-none">
+    <div
+      ref={ref}
+      className="relative w-full h-full pointer-events-none select-none [perspective:1200px]"
+    >
       {/* Aurora */}
       <motion.div
         style={{ y: y1 }}
-        className="absolute -top-20 -right-20 h-[420px] w-[420px] rounded-full blur-3xl opacity-60 animate-aurora"
+        className="absolute -top-16 -right-16 h-[260px] w-[260px] sm:h-[340px] sm:w-[340px] md:h-[420px] md:w-[420px] rounded-full blur-3xl opacity-60 animate-aurora"
         // eslint-disable-next-line react/forbid-dom-props
       >
         <div className="h-full w-full rounded-full bg-gradient-primary opacity-70" />
       </motion.div>
       <motion.div
         style={{ y: y2 }}
-        className="absolute top-1/3 -left-10 h-[320px] w-[320px] rounded-full blur-3xl opacity-50"
+        className="absolute top-1/3 -left-10 h-[200px] w-[200px] sm:h-[260px] sm:w-[260px] md:h-[320px] md:w-[320px] rounded-full blur-3xl opacity-50"
       >
         <div className="h-full w-full rounded-full bg-gradient-accent" />
       </motion.div>
@@ -35,7 +38,7 @@ export const HeroVisual = () => {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.3, duration: 0.8 }}
-        className="absolute right-[10%] top-[18%] w-56 glass-strong rounded-2xl p-4 shadow-3d rotate-[6deg]"
+        className="hidden sm:block absolute right-[10%] top-[18%] w-48 md:w-56 glass-strong rounded-2xl p-4 shadow-3d [transform:rotateY(-12deg)_rotateX(6deg)_rotateZ(6deg)] hover:[transform:rotateY(-6deg)_rotateX(3deg)] transition-transform duration-500"
       >
         <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Today · CA Final</p>
         <p className="font-display text-lg mt-1 leading-tight">SA 700 — Modified Opinions</p>
@@ -51,7 +54,7 @@ export const HeroVisual = () => {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.5, duration: 0.8 }}
-        className="absolute right-[25%] bottom-[20%] w-64 glass-strong rounded-2xl p-4 shadow-3d -rotate-[5deg]"
+        className="hidden md:block absolute right-[25%] bottom-[20%] w-60 md:w-64 glass-strong rounded-2xl p-4 shadow-3d [transform:rotateY(10deg)_rotateX(-4deg)_rotateZ(-5deg)] hover:[transform:rotateY(4deg)_rotateX(-2deg)] transition-transform duration-500"
       >
         <p className="text-[10px] uppercase tracking-widest text-accent">Bilingual Tutor</p>
         <p className="text-sm mt-1.5 italic text-muted-foreground">"GST input credit ki conditions batao…"</p>
@@ -61,13 +64,16 @@ export const HeroVisual = () => {
         </p>
       </motion.div>
 
-      {/* Floating ring */}
+      {/* Floating 3D ring — slow rotation */}
       <motion.div
         style={{ y: y1 }}
         initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.7 }}
-        className="absolute right-[5%] bottom-[8%] h-32 w-32 rounded-full border-2 border-primary/40"
+        animate={{ opacity: 1, rotateY: 360 }}
+        transition={{
+          opacity: { delay: 0.7, duration: 0.8 },
+          rotateY: { repeat: Infinity, duration: 22, ease: "linear" },
+        }}
+        className="absolute right-[5%] bottom-[8%] h-24 w-24 sm:h-28 sm:w-28 md:h-32 md:w-32 rounded-full border-2 border-primary/40 [transform-style:preserve-3d]"
       >
         <div className="absolute inset-2 rounded-full border border-accent/40" />
         <div className="absolute inset-6 rounded-full bg-gradient-primary glow-primary" />
