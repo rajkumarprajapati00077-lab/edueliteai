@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Logo } from "@/components/Logo";
+import { Button } from "@/components/ui/button";
 
 const links = [
   { to: "/", label: "Home" },
@@ -21,8 +22,8 @@ export const Navbar = () => {
       transition={{ duration: 0.5, ease: "easeOut" }}
       className="fixed top-0 inset-x-0 z-50"
     >
-      <div className="mx-auto mt-4 max-w-6xl px-4">
-        <nav className="glass-strong rounded-2xl px-5 py-3 flex items-center justify-between shadow-elevated">
+      <div className="mx-auto mt-3 max-w-7xl px-3 sm:px-6">
+        <nav className="glass-strong rounded-lg px-4 sm:px-5 py-3 flex items-center justify-between shadow-elevated">
           <Logo />
           <ul className="hidden md:flex items-center gap-1">
             {links.map((l) => (
@@ -40,12 +41,9 @@ export const Navbar = () => {
               </li>
             ))}
           </ul>
-          <Link
-            to={cta.to}
-            className="btn-3d inline-flex items-center gap-2 rounded-xl bg-gradient-primary px-4 py-2 text-sm font-semibold text-primary-foreground glow-primary"
-          >
-            {cta.label}
-          </Link>
+          <Button asChild size="sm" className="btn-3d bg-gradient-primary font-semibold shadow-3d">
+            <Link to={cta.to}>{cta.label}</Link>
+          </Button>
         </nav>
       </div>
     </motion.header>
