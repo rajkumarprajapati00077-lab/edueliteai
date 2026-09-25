@@ -23,7 +23,7 @@ export const Navbar = () => {
       className="fixed top-0 inset-x-0 z-50"
     >
       <div className="mx-auto mt-3 max-w-7xl px-3 sm:px-6">
-        <nav className="glass-strong rounded-lg px-4 sm:px-5 py-3 flex items-center justify-between shadow-elevated">
+        <nav className="glass-strong flex items-center justify-between rounded-2xl px-4 py-2.5 shadow-elevated sm:px-5">
           <Logo />
           <ul className="hidden md:flex items-center gap-1">
             {links.map((l) => (
