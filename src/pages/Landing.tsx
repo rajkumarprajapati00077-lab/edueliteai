@@ -104,7 +104,7 @@ const Landing = () => {
 
                 <motion.div variants={reveal} initial="hidden" animate="visible" custom={0.34} className="bento-tile min-h-36 rounded-2xl p-5 md:min-h-0">
                   <div className="flex items-center gap-1.5">
-                    {[0, 1, 2, 3].map((bar) => <span key={bar} className="w-2 rounded-full bg-primary" style={{ height: `${16 + bar * 7}px`, opacity: 0.45 + bar * 0.16 }} />)}
+                    {["h-4 opacity-40", "h-6 opacity-60", "h-8 opacity-80", "h-10"].map((barClass) => <span key={barClass} className={`w-2 rounded-full bg-primary ${barClass}`} />)}
                   </div>
                   <div className="absolute bottom-5 left-5">
                     <p className="font-display text-lg font-bold">Attempt ready</p>

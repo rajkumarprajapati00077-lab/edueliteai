@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import { Menu } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Logo } from "@/components/Logo";
@@ -45,7 +44,6 @@ export const Navbar = () => {
           <Button asChild size="sm" className="btn-3d bg-gradient-primary font-semibold shadow-3d">
             <Link to={cta.to}>{cta.label}</Link>
           </Button>
-          <Menu className="hidden" aria-hidden="true" />
         </nav>
       </div>
     </motion.header>
