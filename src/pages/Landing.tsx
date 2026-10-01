@@ -58,7 +58,7 @@ const Landing = () => {
                 <span className="w-full text-[10px] font-semibold uppercase text-muted-foreground sm:w-auto sm:mr-auto">Explore your course</span>
                 {institutes.map((institute) => (
                   <a key={institute.name} href={institute.href} target="_blank" rel="noreferrer" className="group flex min-w-0 flex-1 items-center gap-2 border-r border-border/70 pr-2 last:border-r-0 sm:flex-none sm:gap-3 sm:pr-6" aria-label={`${institute.course} course reference — ${institute.name} official website`}>
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-card/80 p-1 shadow-3d transition-transform group-hover:-translate-y-1 sm:h-12 sm:w-12"><img src={institute.logo} alt="" loading="lazy" className="max-h-full max-w-full object-contain" /></span>
+                    <span className="institute-logo flex h-10 w-10 shrink-0 items-center justify-center rounded-md p-1 shadow-3d transition-transform group-hover:-translate-y-1 sm:h-12 sm:w-12"><img src={institute.logo} alt="" loading="lazy" className="max-h-full max-w-full object-contain" /></span>
                     <span className="min-w-0"><strong className="block text-sm leading-tight sm:text-base">{institute.course}</strong><span className="text-[10px] text-muted-foreground">{institute.name}</span></span>
                   </a>
                 ))}

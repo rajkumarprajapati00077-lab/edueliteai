@@ -27,6 +27,7 @@
     --border: 205 12% 27%;
     --input: 205 12% 23%;
     --ring: 9 100% 70%;
+    --logo-surface: 0 0% 100%;
     --radius: 0.5rem;
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
     --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-glow)));
@@ -71,6 +72,7 @@
     --border: 205 12% 79%;
     --input: 205 12% 87%;
     --ring: 9 78% 43%;
+    --logo-surface: 0 0% 100%;
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
     --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-glow)));
     --gradient-hero: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--background)));
@@ -117,6 +119,7 @@
   .glass-strong {
     @apply backdrop-blur-2xl bg-card/80 border border-foreground/10;
   }
+  .institute-logo { background: hsl(var(--logo-surface)); }
   [data-theme="academic-editorial"] .glass {
     @apply bg-card/80 border-border;
     backdrop-filter: blur(8px);

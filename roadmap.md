@@ -1,3 +1,3 @@
-- [ ] Remove Premium theme and normalize old preferences.
-- [ ] Redesign the home page as a compact visual tool dashboard with real institute logos and glass accents.
-- [ ] Verify both themes and mobile/desktop layouts.
+- [x] Remove Premium theme and normalize old preferences.
+- [x] Redesign the home page as a compact visual tool dashboard with real institute logos and glass accents.
+- [x] Verify both themes and mobile/desktop layouts.
