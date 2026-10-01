@@ -134,7 +134,7 @@ export const ProfileDrawer = ({ open, onClose }: Props) => {
                   <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground px-1 mb-2 flex items-center gap-1">
                     <Palette className="h-3 w-3" /> Theme
                   </p>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-2 gap-2">
                     {THEMES.map((t) => (
                       <button key={t.id} onClick={() => pickTheme(t.id)}
                         className={`btn-3d rounded-xl p-2 text-[10px] border transition-all ${theme === t.id ? "border-primary bg-gradient-primary text-primary-foreground" : "border-border bg-card/40"}`}>

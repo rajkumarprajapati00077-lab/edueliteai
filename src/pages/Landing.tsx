@@ -1,23 +1,10 @@
 import { motion } from "framer-motion";
-import {
-  ArrowRight,
-  BookOpen,
-  Brain,
-  CalendarDays,
-  FileText,
-  Languages,
-  ListChecks,
-  MessageCircle,
-  Music,
-  Network,
-  Sparkles,
-} from "lucide-react";
+import { ArrowRight, BookOpen, Brain, CalendarDays, FileText, MessageCircle, Music2, Network, Sparkles, Timer } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { PageTransition } from "@/components/PageTransition";
 import { FloatingProfileButton } from "@/components/FloatingProfileButton";
 import { PrivacyNotice } from "@/components/PrivacyNotice";
-import { LogoMark } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import studentImage from "@/assets/home-study.jpg";
@@ -25,150 +12,85 @@ import icaiLogo from "@/assets/authorities/icai.png";
 import icsiLogo from "@/assets/authorities/icsi.png";
 import icmaiLogo from "@/assets/authorities/icmai.jpg";
 
-const authorities = [
+const institutes = [
   { name: "ICAI", course: "CA", logo: icaiLogo, href: "https://www.icai.org/" },
   { name: "ICSI", course: "CS", logo: icsiLogo, href: "https://www.icsi.edu/" },
   { name: "ICMAI", course: "CMA", logo: icmaiLogo, href: "https://icmai.in/" },
 ];
 
 const tools = [
-  { icon: Brain, to: "/ai-tools", title: "AI Tools", caption: "Learn smarter" },
-  { icon: BookOpen, to: "/syllabus", title: "Syllabus", caption: "Chapter by chapter" },
-  { icon: ListChecks, to: "/quiz", title: "Quizzes", caption: "Practice & score" },
-  { icon: FileText, to: "/notes", title: "Notes", caption: "Create & revise" },
-  { icon: MessageCircle, to: "/chat", title: "AI Tutor", caption: "Ask naturally" },
-  { icon: CalendarDays, to: "/calendar", title: "Planner", caption: "Stay on track" },
-  { icon: Network, to: "/inter-linkage", title: "Concept Links", caption: "See connections" },
-  { icon: Music, to: "/music", title: "Focus Music", caption: "Settle into flow" },
+  { icon: BookOpen, to: "/syllabus", title: "Syllabus", detail: "Chapter by chapter", number: "01" },
+  { icon: MessageCircle, to: "/chat", title: "AI Tutor", detail: "Ask anything", number: "02" },
+  { icon: FileText, to: "/notes", title: "Notes", detail: "Make it stick", number: "03" },
+  { icon: Brain, to: "/quiz", title: "Quizzes", detail: "Test yourself", number: "04" },
+  { icon: CalendarDays, to: "/calendar", title: "Planner", detail: "Your next step", number: "05" },
+  { icon: Network, to: "/inter-linkage", title: "Concept links", detail: "Connect ideas", number: "06" },
+  { icon: Timer, to: "/survival-planner", title: "Exam sprint", detail: "Stay on track", number: "07" },
+  { icon: Music2, to: "/music", title: "Focus music", detail: "Find your flow", number: "08" },
 ];
-
-const reveal = {
-  hidden: { opacity: 0, y: 18 },
-  visible: (delay = 0) => ({ opacity: 1, y: 0, transition: { delay, duration: 0.55 } }),
-};
 
 const Landing = () => {
   const { user } = useAuth();
-  const destination = user ? "/dashboard" : "/auth";
+  const path = (to: string) => user ? to : "/auth";
 
   return (
     <PageTransition>
       <div className="min-h-screen overflow-x-hidden bg-background">
-        <FloatingProfileButton />
         <Navbar />
-
+        <FloatingProfileButton />
         <main>
-          <section className="relative flex min-h-[94svh] items-center overflow-hidden pb-10 pt-24 sm:pt-28">
-            <div className="absolute inset-0 bg-gradient-hero" />
-            <div className="absolute inset-0 grid-bg opacity-25 [mask-image:radial-gradient(ellipse_at_center,black,transparent_76%)]" />
-            <div className="absolute left-[7%] top-[22%] h-32 w-32 rounded-full border border-primary/20 animate-drift sm:h-48 sm:w-48" />
-            <div className="absolute bottom-[12%] right-[6%] h-24 w-24 rounded-full border border-accent/25 animate-drift-delayed sm:h-36 sm:w-36" />
-
-            <div className="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-7">
-              <motion.div variants={reveal} initial="hidden" animate="visible" custom={0.05} className="mx-auto mb-7 max-w-3xl text-center">
-                <LogoMark size={76} className="mx-auto drop-shadow-[0_12px_26px_hsl(var(--primary)/0.24)] sm:h-24 sm:w-24" />
-                <p className="mt-3 text-xs font-semibold uppercase tracking-[0.18em] text-primary">CA · CS · CMA</p>
-                <h1 className="mx-auto mt-3 max-w-3xl font-display text-[clamp(2.35rem,6vw,4.8rem)] font-bold leading-[1.08]">
-                  Your study world, <span className="text-gradient">finally in sync.</span>
-                </h1>
-                <p className="mx-auto mt-4 max-w-lg text-sm leading-6 text-muted-foreground sm:text-base">
-                  Plan, understand, practise and revise—without switching between ten different apps.
-                </p>
-                <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
-                  <Button asChild size="lg" className="btn-3d bg-gradient-primary font-semibold shadow-3d">
-                    <Link to={destination}>{user ? "Open my workspace" : "Start studying"}<ArrowRight className="h-4 w-4" /></Link>
-                  </Button>
-                  <Button asChild size="lg" variant="outline" className="glass-strong font-semibold">
-                    <Link to={user ? "/chat" : "/auth"}><Sparkles className="h-4 w-4" />Ask the tutor</Link>
-                  </Button>
+          <section className="relative border-b border-border/70 px-4 pb-14 pt-28 sm:px-7 sm:pt-32 lg:pb-20" aria-labelledby="home-title">
+            <div className="mx-auto max-w-6xl">
+              <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }} className="mb-8 flex flex-col gap-6 lg:mb-10 lg:flex-row lg:items-end lg:justify-between">
+                <div>
+                  <div className="mb-4 inline-flex items-center gap-2 border-b border-primary/50 pb-2 text-xs font-semibold uppercase text-primary">
+                    <span className="h-2 w-2 rounded-full bg-primary animate-pulse" /> CA · CS · CMA workspace
+                  </div>
+                  <h1 id="home-title" className="font-display text-5xl leading-[0.98] sm:text-6xl lg:text-7xl">EduElite<span className="text-primary">.</span></h1>
+                  <p className="mt-3 max-w-md text-sm text-muted-foreground sm:text-base">One place to learn, practise and prepare.</p>
                 </div>
+                <Button asChild size="lg" className="w-fit gap-3 font-semibold shadow-3d transition-transform hover:-translate-y-1">
+                  <Link to={path("/dashboard")}>{user ? "Open workspace" : "Start studying"}<ArrowRight className="h-4 w-4" /></Link>
+                </Button>
               </motion.div>
 
-              <div className="mx-auto grid max-w-5xl grid-cols-2 gap-3 md:grid-cols-4 md:grid-rows-2">
-                <motion.div variants={reveal} initial="hidden" animate="visible" custom={0.18} className="bento-tile col-span-2 min-h-56 rounded-2xl md:row-span-2 md:min-h-[21rem]">
-                  <img src={studentImage} alt="Student preparing with EduElite" width={1536} height={1024} fetchPriority="high" className="absolute inset-0 h-full w-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
-                  <div className="absolute inset-x-0 bottom-0 p-5 sm:p-7">
-                    <span className="inline-flex rounded-full border border-foreground/15 bg-background/70 px-3 py-1 text-[11px] font-semibold backdrop-blur-lg">Today’s plan</span>
-                    <h2 className="mt-3 max-w-md font-display text-2xl font-bold sm:text-3xl">One clear step at a time.</h2>
-                  </div>
-                </motion.div>
-
-                <motion.div variants={reveal} initial="hidden" animate="visible" custom={0.28} className="bento-tile min-h-36 rounded-2xl p-5 md:min-h-0">
-                  <Languages className="h-6 w-6 text-primary" />
-                  <div className="absolute bottom-5 left-5">
-                    <p className="font-display text-lg font-bold">Hindi + English</p>
-                    <p className="mt-1 text-xs text-muted-foreground">Explain it my way</p>
-                  </div>
-                </motion.div>
-
-                <motion.div variants={reveal} initial="hidden" animate="visible" custom={0.34} className="bento-tile min-h-36 rounded-2xl p-5 md:min-h-0">
-                  <div className="flex items-center gap-1.5">
-                    {["h-4 opacity-40", "h-6 opacity-60", "h-8 opacity-80", "h-10"].map((barClass) => <span key={barClass} className={`w-2 rounded-full bg-primary ${barClass}`} />)}
-                  </div>
-                  <div className="absolute bottom-5 left-5">
-                    <p className="font-display text-lg font-bold">Attempt ready</p>
-                    <p className="mt-1 text-xs text-muted-foreground">Plans that adjust</p>
-                  </div>
-                </motion.div>
-
-                <motion.div variants={reveal} initial="hidden" animate="visible" custom={0.4} className="bento-tile col-span-2 flex min-h-28 items-center justify-between rounded-2xl p-5 md:min-h-0">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">Everything connected</p>
-                    <p className="mt-1 font-display text-xl font-bold">Notes → Quiz → Revision</p>
-                  </div>
-                  <ArrowRight className="h-5 w-5 text-primary" />
-                </motion.div>
-              </div>
-            </div>
-          </section>
-
-          <section className="border-y border-border bg-card/40 py-8" aria-label="Professional course institutes">
-            <div className="mx-auto max-w-5xl px-4 sm:px-7">
-              <p className="mb-5 text-center text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Built for India’s professional pathways</p>
-              <div className="grid grid-cols-3 gap-2 sm:gap-4">
-                {authorities.map((authority) => (
-                  <a key={authority.name} href={authority.href} target="_blank" rel="noreferrer" className="group flex min-w-0 flex-col items-center justify-center gap-2 rounded-xl border border-border bg-background/70 px-2 py-4 text-center transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-elevated sm:flex-row sm:gap-4 sm:px-5">
-                    <img src={authority.logo} alt={`${authority.name} logo`} loading="lazy" width={80} height={80} className="h-10 w-14 object-contain sm:h-14 sm:w-16" />
-                    <div className="min-w-0 sm:text-left">
-                      <strong className="block font-display text-base sm:text-lg">{authority.course}</strong>
-                      <span className="text-[10px] text-muted-foreground sm:text-xs">{authority.name}</span>
-                    </div>
+              <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12, duration: 0.55 }} className="mb-8 flex flex-wrap items-center gap-3 border-y border-border/70 py-4 sm:gap-6" aria-label="Professional course institutes">
+                <span className="w-full text-[10px] font-semibold uppercase text-muted-foreground sm:w-auto sm:mr-auto">Explore your course</span>
+                {institutes.map((institute) => (
+                  <a key={institute.name} href={institute.href} target="_blank" rel="noreferrer" className="group flex min-w-0 flex-1 items-center gap-2 border-r border-border/70 pr-2 last:border-r-0 sm:flex-none sm:gap-3 sm:pr-6" aria-label={`${institute.course} course reference — ${institute.name} official website`}>
+                    <span className="institute-logo flex h-10 w-10 shrink-0 items-center justify-center rounded-md p-1 shadow-3d transition-transform group-hover:-translate-y-1 sm:h-12 sm:w-12"><img src={institute.logo} alt="" loading="lazy" className="max-h-full max-w-full object-contain" /></span>
+                    <span className="min-w-0"><strong className="block text-sm leading-tight sm:text-base">{institute.course}</strong><span className="text-[10px] text-muted-foreground">{institute.name}</span></span>
                   </a>
                 ))}
+              </motion.div>
+
+              <div className="grid gap-4 lg:grid-cols-[1.05fr_1.7fr] lg:gap-5">
+                <Link to={path("/ai-tools")} className="group relative flex min-h-64 flex-col justify-between overflow-hidden rounded-md bg-card shadow-elevated sm:min-h-72 lg:min-h-full" aria-label="Explore AI study tools">
+                  <img src={studentImage} alt="Student studying with books and laptop" width={1536} height={1024} fetchPriority="high" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+                  <span className="relative m-5 w-fit rounded-sm border border-foreground/20 bg-background/70 px-2.5 py-1 text-[10px] font-semibold uppercase text-foreground backdrop-blur-lg">Your study desk</span>
+                  <div className="relative flex items-end justify-between gap-3 p-5 sm:p-7">
+                    <div><h2 className="font-display text-3xl text-foreground sm:text-4xl">A better way to focus.</h2><p className="mt-1 text-xs text-foreground/80">Explore all AI tools</p></div>
+                    <ArrowRight className="h-6 w-6 shrink-0 text-foreground transition-transform group-hover:translate-x-1" />
+                  </div>
+                </Link>
+
+                <div id="services" className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3" aria-label="Study tools">
+                  {tools.map((tool, index) => (
+                    <motion.div key={tool.to} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.045 }}>
+                      <Link to={path(tool.to)} className="group relative flex h-36 flex-col justify-between overflow-hidden rounded-md border border-border/70 bg-card/55 p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-primary/60 hover:bg-card hover:shadow-elevated sm:h-44" aria-label={tool.title}>
+                        <div className="flex items-start justify-between"><span className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10 text-primary transition-transform group-hover:scale-110"><tool.icon className="h-5 w-5" strokeWidth={1.8} /></span><span className="text-[10px] text-muted-foreground">{tool.number}</span></div>
+                        <div><h3 className="text-sm font-semibold sm:text-base">{tool.title}</h3><p className="mt-0.5 text-[11px] text-muted-foreground">{tool.detail}</p></div>
+                      </Link>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
-              <p className="mt-4 text-center text-[10px] leading-4 text-muted-foreground">Course references only. EduElite is an independent platform and is not endorsed by these institutes.</p>
+              <div className="mt-5 flex items-center gap-2 text-[11px] text-muted-foreground"><Sparkles className="h-3.5 w-3.5 text-primary" /> Built for independent CA, CS & CMA preparation.</div>
             </div>
           </section>
-
-          <section className="py-16 sm:py-24" id="services">
-            <div className="mx-auto max-w-6xl px-4 sm:px-7">
-              <div className="mx-auto max-w-xl text-center">
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">Your workspace</p>
-                <h2 className="mt-3 font-display text-3xl font-bold sm:text-5xl">Pick what you need. Begin.</h2>
-              </div>
-              <div className="mt-9 grid grid-cols-2 gap-3 md:grid-cols-4">
-                {tools.map((tool, index) => (
-                  <motion.div key={tool.to} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: (index % 4) * 0.06 }}>
-                    <Link to={user ? tool.to : "/auth"} className="bento-tile group flex min-h-36 flex-col justify-between rounded-xl p-4 transition-transform hover:-translate-y-1 sm:min-h-44 sm:p-5">
-                      <tool.icon className="h-6 w-6 text-primary transition-transform duration-300 group-hover:scale-110" />
-                      <div>
-                        <h3 className="font-display text-base font-bold sm:text-lg">{tool.title}</h3>
-                        <p className="mt-1 text-[11px] text-muted-foreground sm:text-xs">{tool.caption}</p>
-                      </div>
-                    </Link>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          <section className="border-t border-border py-12">
-            <div className="mx-auto max-w-4xl px-4 sm:px-7"><PrivacyNotice /></div>
-            <footer className="mx-auto mt-8 flex max-w-6xl flex-col items-center justify-between gap-2 px-4 text-center text-xs text-muted-foreground sm:flex-row sm:px-7">
-              <span>© 2026 EduElite</span><span>Made for CA, CS & CMA students.</span>
-            </footer>
-          </section>
+          <section className="px-4 py-12 sm:px-7" aria-label="Privacy"><div className="mx-auto max-w-5xl"><PrivacyNotice /></div></section>
+          <footer className="mx-auto flex max-w-6xl items-center justify-between border-t border-border/70 px-4 py-5 text-xs text-muted-foreground sm:px-7"><span>© 2026 EduElite</span><span>Independent platform · Not endorsed by ICAI, ICSI or ICMAI</span></footer>
         </main>
       </div>
     </PageTransition>
