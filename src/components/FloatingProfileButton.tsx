@@ -22,7 +22,7 @@ export const FloatingProfileButton = () => {
         whileTap={{ scale: 0.95 }}
         transition={{ delay: 0.6, type: "spring", stiffness: 260, damping: 18 }}
         aria-label={user ? "Open profile" : "Sign in"}
-        className="fixed left-4 top-4 md:left-6 md:top-6 z-[55] h-12 w-12 rounded-2xl glass-strong shadow-elevated grid place-items-center group"
+        className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[55] h-12 w-12 rounded-2xl glass-strong shadow-elevated grid place-items-center group"
       >
         <span className="absolute inset-0 rounded-2xl bg-gradient-primary opacity-0 group-hover:opacity-30 transition-opacity blur-md" />
         {user && initials ? (

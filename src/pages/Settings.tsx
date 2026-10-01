@@ -136,7 +136,7 @@ const Settings = () => {
 
           <section className="mt-5 glass-strong rounded-2xl p-6 shadow-3d">
             <h2 className="font-semibold flex items-center gap-2 mb-4"><Palette className="h-4 w-4 text-primary" /> Theme</h2>
-            <div className="grid sm:grid-cols-3 gap-3">
+            <div className="grid sm:grid-cols-2 gap-3">
               {THEMES.map((t) => (
                 <button key={t.id} onClick={() => pickTheme(t.id)}
                   className={`btn-3d text-left rounded-2xl p-4 border transition-all ${theme === t.id ? "border-primary bg-gradient-primary text-primary-foreground glow-primary" : "border-border bg-card/40 hover:border-primary/50"}`}>
