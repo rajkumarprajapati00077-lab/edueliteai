@@ -2,163 +2,92 @@
 @tailwind components;
 @tailwind utilities;
 
-/* EduElite — Premium AI study workspace for CA / CS / CMA students.
-   Multi-theme: premium-dark (default), minimal-modern, academic-editorial. */
-
+/* EduElite — graphite/coral minimal and paper/ink academic themes. */
 @layer base {
-  /* PREMIUM DARK — deep navy + warm gold (default) */
-  :root, [data-theme="premium-dark"] {
-    --background: 222 43% 7%;
-    --foreground: 42 33% 96%;
-
-    --card: 220 34% 10%;
-    --card-foreground: 42 33% 96%;
-
-    --popover: 224 35% 8%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 37 78% 57%;            /* burnished gold */
-    --primary-foreground: 224 40% 8%;
-    --primary-glow: 38 100% 68%;
-
-    --accent: 158 52% 45%;            /* academic green */
-    --accent-foreground: 224 40% 8%;
-    --accent-glow: 188 100% 65%;
-
-    --secondary: 224 25% 13%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 224 22% 14%;
-    --muted-foreground: 39 12% 70%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
-
-    --success: 150 80% 50%;
-
-    --border: 224 22% 17%;
-    --input: 224 22% 14%;
-    --ring: 41 95% 58%;
-
+  :root, [data-theme="minimal-modern"] {
+    --background: 210 9% 11%;
+    --foreground: 80 18% 96%;
+    --card: 210 12% 15%;
+    --card-foreground: 80 18% 96%;
+    --popover: 210 12% 15%;
+    --popover-foreground: 80 18% 96%;
+    --primary: 9 100% 70%;
+    --primary-foreground: 210 9% 11%;
+    --primary-glow: 9 100% 76%;
+    --accent: 163 35% 62%;
+    --accent-foreground: 210 9% 11%;
+    --accent-glow: 163 35% 72%;
+    --secondary: 205 16% 21%;
+    --secondary-foreground: 80 18% 96%;
+    --muted: 205 12% 19%;
+    --muted-foreground: 200 8% 69%;
+    --destructive: 0 76% 58%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 153 48% 55%;
+    --border: 205 12% 27%;
+    --input: 205 12% 23%;
+    --ring: 9 100% 70%;
     --radius: 0.5rem;
-
-    --gradient-primary: linear-gradient(135deg, hsl(37 78% 57%), hsl(27 72% 51%));
-    --gradient-accent: linear-gradient(135deg, hsl(158 52% 45%), hsl(194 55% 43%));
-    --gradient-hero: radial-gradient(ellipse at 18% 15%, hsl(37 78% 57% / 0.16), transparent 52%),
-                     radial-gradient(ellipse at 86% 82%, hsl(158 52% 45% / 0.12), transparent 54%);
-    --gradient-card: linear-gradient(145deg, hsl(224 30% 11% / 0.85), hsl(224 30% 7% / 0.65));
-    --gradient-text: linear-gradient(135deg, hsl(42 84% 72%), hsl(29 76% 62%));
-
-    --shadow-glow: 0 0 60px hsl(41 95% 58% / 0.35);
-    --shadow-glow-accent: 0 0 60px hsl(188 95% 55% / 0.3);
-    --shadow-elevated: 0 30px 80px -20px hsl(41 95% 30% / 0.5);
-    --shadow-3d: 0 1px 0 hsl(0 0% 100% / 0.08) inset, 0 -2px 0 hsl(0 0% 0% / 0.4) inset, 0 12px 24px -12px hsl(0 0% 0% / 0.6);
-
-    --font-display: 'Libre Baskerville', Georgia, serif;
-    --font-body: 'IBM Plex Sans', system-ui, sans-serif;
-
-    --sidebar-background: 224 35% 7%;
-    --sidebar-foreground: 220 10% 75%;
-    --sidebar-primary: 41 95% 58%;
-    --sidebar-primary-foreground: 224 40% 8%;
-    --sidebar-accent: 224 25% 13%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 224 22% 14%;
-    --sidebar-ring: 41 95% 58%;
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-glow)));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--background)));
+    --gradient-card: linear-gradient(145deg, hsl(var(--card)), hsl(var(--secondary)));
+    --gradient-text: linear-gradient(135deg, hsl(var(--foreground)), hsl(var(--primary)));
+    --shadow-glow: 0 14px 44px -20px hsl(var(--primary) / 0.48);
+    --shadow-glow-accent: 0 14px 44px -20px hsl(var(--accent) / 0.48);
+    --shadow-elevated: 0 24px 50px -28px hsl(210 20% 2% / 0.7);
+    --shadow-3d: 0 1px 0 hsl(var(--foreground) / 0.13) inset, 0 8px 18px -12px hsl(210 20% 2% / 0.65);
+    --font-display: 'Instrument Serif', Georgia, serif;
+    --font-body: 'Work Sans', system-ui, sans-serif;
+    --sidebar-background: 210 9% 11%;
+    --sidebar-foreground: 200 8% 69%;
+    --sidebar-primary: 9 100% 70%;
+    --sidebar-primary-foreground: 210 9% 11%;
+    --sidebar-accent: 205 16% 21%;
+    --sidebar-accent-foreground: 80 18% 96%;
+    --sidebar-border: 205 12% 27%;
+    --sidebar-ring: 9 100% 70%;
   }
-
-  /* MINIMAL MODERN — crisp midnight + amber */
-  [data-theme="minimal-modern"] {
-    --background: 240 10% 4%;
-    --foreground: 0 0% 98%;
-    --card: 240 8% 8%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 8% 7%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 36 90% 56%;
-    --primary-foreground: 216 57% 7%;
-    --primary-glow: 42 100% 68%;
-    --accent: 194 56% 36%;
-    --accent-foreground: 0 0% 100%;
-    --accent-glow: 184 58% 53%;
-    --secondary: 240 8% 13%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 8% 14%;
-    --muted-foreground: 240 5% 65%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
-    --success: 150 70% 50%;
-    --border: 240 8% 16%;
-    --input: 240 8% 14%;
-    --ring: 36 90% 56%;
-    --radius: 0.75rem;
-    --gradient-primary: linear-gradient(135deg, hsl(36 90% 56%), hsl(27 84% 52%));
-    --gradient-accent: linear-gradient(135deg, hsl(194 56% 36%), hsl(169 48% 40%));
-    --gradient-hero: radial-gradient(ellipse at 30% 20%, hsl(36 90% 56% / 0.18), transparent 60%),
-                     radial-gradient(ellipse at 80% 80%, hsl(194 56% 36% / 0.2), transparent 60%);
-    --gradient-card: linear-gradient(145deg, hsl(240 8% 10% / 0.85), hsl(240 8% 5% / 0.65));
-    --gradient-text: linear-gradient(135deg, hsl(42 100% 68%), hsl(27 84% 60%));
-    --shadow-glow: 0 0 60px hsl(36 90% 56% / 0.3);
-    --shadow-glow-accent: 0 0 60px hsl(194 56% 36% / 0.3);
-    --shadow-elevated: 0 30px 80px -20px hsl(194 56% 20% / 0.45);
-    --shadow-3d: 0 1px 0 hsl(0 0% 100% / 0.06) inset, 0 -2px 0 hsl(0 0% 0% / 0.5) inset, 0 12px 24px -12px hsl(0 0% 0% / 0.7);
-    --font-display: 'Libre Baskerville', Georgia, serif;
-    --font-body: 'IBM Plex Sans', system-ui, sans-serif;
-    --sidebar-background: 240 10% 5%;
-    --sidebar-foreground: 240 5% 75%;
-    --sidebar-primary: 36 90% 56%;
-    --sidebar-primary-foreground: 216 57% 7%;
-    --sidebar-accent: 240 8% 13%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 240 8% 14%;
-    --sidebar-ring: 36 90% 56%;
-  }
-
-  /* ACADEMIC EDITORIAL — light cream + ink + emerald */
   [data-theme="academic-editorial"] {
-    --background: 38 30% 96%;
-    --foreground: 220 30% 12%;
+    --background: 80 18% 96%;
+    --foreground: 210 9% 11%;
     --card: 0 0% 100%;
-    --card-foreground: 220 30% 12%;
+    --card-foreground: 210 9% 11%;
     --popover: 0 0% 100%;
-    --popover-foreground: 220 30% 12%;
-    --primary: 156 60% 28%;          /* deep emerald */
-    --primary-foreground: 38 30% 96%;
-    --primary-glow: 156 65% 40%;
-    --accent: 28 80% 50%;             /* burnt amber */
-    --accent-foreground: 38 30% 96%;
-    --accent-glow: 28 85% 60%;
-    --secondary: 38 20% 90%;
-    --secondary-foreground: 220 30% 12%;
-    --muted: 38 20% 92%;
-    --muted-foreground: 220 15% 40%;
-    --destructive: 0 75% 45%;
-    --destructive-foreground: 38 30% 96%;
-    --success: 156 60% 35%;
-    --border: 38 20% 85%;
-    --input: 38 20% 92%;
-    --ring: 156 60% 28%;
-    --radius: 0.5rem;
-    --gradient-primary: linear-gradient(135deg, hsl(156 60% 28%), hsl(170 60% 32%));
-    --gradient-accent: linear-gradient(135deg, hsl(28 80% 50%), hsl(15 80% 55%));
-    --gradient-hero: radial-gradient(ellipse at 25% 15%, hsl(156 60% 28% / 0.12), transparent 60%),
-                     radial-gradient(ellipse at 80% 85%, hsl(28 80% 50% / 0.1), transparent 60%);
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100% / 0.95), hsl(38 20% 96% / 0.85));
-    --gradient-text: linear-gradient(135deg, hsl(156 60% 28%), hsl(28 80% 45%));
-    --shadow-glow: 0 0 40px hsl(156 60% 28% / 0.18);
-    --shadow-glow-accent: 0 0 40px hsl(28 80% 50% / 0.18);
-    --shadow-elevated: 0 20px 50px -16px hsl(220 30% 30% / 0.18);
-    --shadow-3d: 0 1px 0 hsl(0 0% 100% / 0.7) inset, 0 -2px 0 hsl(220 30% 12% / 0.08) inset, 0 8px 18px -8px hsl(220 30% 12% / 0.18);
-    --font-display: 'Libre Baskerville', Georgia, serif;
-    --font-body: 'IBM Plex Sans', system-ui, sans-serif;
-    --sidebar-background: 38 25% 94%;
-    --sidebar-foreground: 220 25% 25%;
-    --sidebar-primary: 156 60% 28%;
-    --sidebar-primary-foreground: 38 30% 96%;
-    --sidebar-accent: 38 20% 88%;
-    --sidebar-accent-foreground: 220 30% 12%;
-    --sidebar-border: 38 20% 85%;
-    --sidebar-ring: 156 60% 28%;
+    --popover-foreground: 210 9% 11%;
+    --primary: 9 78% 43%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 9 85% 52%;
+    --accent: 163 45% 31%;
+    --accent-foreground: 0 0% 100%;
+    --accent-glow: 163 45% 40%;
+    --secondary: 205 14% 88%;
+    --secondary-foreground: 210 9% 11%;
+    --muted: 205 10% 91%;
+    --muted-foreground: 205 12% 36%;
+    --destructive: 0 70% 42%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 153 55% 30%;
+    --border: 205 12% 79%;
+    --input: 205 12% 87%;
+    --ring: 9 78% 43%;
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-glow)));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--background)));
+    --gradient-card: linear-gradient(145deg, hsl(var(--card)), hsl(var(--secondary)));
+    --gradient-text: linear-gradient(135deg, hsl(var(--foreground)), hsl(var(--primary)));
+    --shadow-glow: 0 14px 44px -20px hsl(var(--primary) / 0.32);
+    --shadow-glow-accent: 0 14px 44px -20px hsl(var(--accent) / 0.32);
+    --shadow-elevated: 0 24px 50px -28px hsl(var(--foreground) / 0.27);
+    --shadow-3d: 0 1px 0 hsl(var(--card) / 0.85) inset, 0 8px 18px -12px hsl(var(--foreground) / 0.2);
+    --sidebar-background: 80 18% 96%;
+    --sidebar-foreground: 205 12% 36%;
+    --sidebar-primary: 9 78% 43%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 205 14% 88%;
+    --sidebar-accent-foreground: 210 9% 11%;
+    --sidebar-border: 205 12% 79%;
+    --sidebar-ring: 9 78% 43%;
   }
 }
 
@@ -173,10 +102,7 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: 'cv11', 'ss01', 'ss03', 'ss07';
-    background-image:
-      radial-gradient(ellipse at top, hsl(var(--primary) / 0.08), transparent 50%),
-      radial-gradient(ellipse at bottom, hsl(var(--accent) / 0.06), transparent 50%);
-    background-attachment: fixed;
+
   }
   h1, h2, h3, .font-display {
     font-family: var(--font-display);
