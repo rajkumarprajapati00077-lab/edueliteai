@@ -1,32 +1,39 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 
-export type ThemeName = "minimal-modern" | "academic-editorial";
+type DisplayMode = "light" | "dark";
+const KEY = "eduelite.display-mode";
 
-export const THEMES: { id: ThemeName; label: string; tagline: string }[] = [
-  { id: "minimal-modern", label: "Minimal", tagline: "Graphite + coral" },
-  { id: "academic-editorial", label: "Academic", tagline: "Paper + ink" },
-];
-
-const KEY = "eduelite.theme";
-
-type Ctx = { theme: ThemeName; setTheme: (t: ThemeName) => void };
-const ThemeCtx = createContext<Ctx>({ theme: "minimal-modern", setTheme: () => {} });
+type Ctx = { mode: DisplayMode; toggleMode: () => void };
+const ThemeCtx = createContext<Ctx>({ mode: "light", toggleMode: () => {} });
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [theme, setThemeState] = useState<ThemeName>(() => {
-    if (typeof window === "undefined") return "minimal-modern";
+  const [mode, setMode] = useState<DisplayMode>(() => {
+    if (typeof window === "undefined") return "light";
     const stored = localStorage.getItem(KEY);
-    return stored === "academic-editorial" ? "academic-editorial" : "minimal-modern";
+    return stored === "dark" || stored === "light" ? stored : window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   });
 
   useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-    document.documentElement.classList.toggle("light", theme === "academic-editorial");
-    document.documentElement.classList.toggle("dark", theme !== "academic-editorial");
-    localStorage.setItem(KEY, theme);
-  }, [theme]);
+    document.documentElement.setAttribute("data-theme", "academic-editorial");
+    document.documentElement.setAttribute("data-mode", mode);
+    document.documentElement.classList.toggle("light", mode === "light");
+    document.documentElement.classList.toggle("dark", mode === "dark");
+  }, [mode]);
 
-  return <ThemeCtx.Provider value={{ theme, setTheme: setThemeState }}>{children}</ThemeCtx.Provider>;
+  useEffect(() => {
+    if (localStorage.getItem(KEY)) return;
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const onChange = () => setMode(media.matches ? "dark" : "light");
+    media.addEventListener("change", onChange);
+    return () => media.removeEventListener("change", onChange);
+  }, []);
+
+  const toggleMode = () => setMode((current) => {
+    const next = current === "light" ? "dark" : "light";
+    localStorage.setItem(KEY, next);
+    return next;
+  });
+  return <ThemeCtx.Provider value={{ mode, toggleMode }}>{children}</ThemeCtx.Provider>;
 };
 
 export const useTheme = () => useContext(ThemeCtx);

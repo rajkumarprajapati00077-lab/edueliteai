@@ -2,9 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* EduElite — graphite/coral minimal and paper/ink academic themes. */
+/* EduElite academic palette: paper/ink by day, graphite/coral by night. */
 @layer base {
-  :root, [data-theme="minimal-modern"] {
+  [data-mode="dark"] {
     --background: 210 9% 11%;
     --foreground: 80 18% 96%;
     --card: 210 12% 15%;
@@ -49,7 +49,7 @@
     --sidebar-border: 205 12% 27%;
     --sidebar-ring: 9 100% 70%;
   }
-  [data-theme="academic-editorial"] {
+  :root, [data-mode="light"] {
     --background: 80 18% 96%;
     --foreground: 210 9% 11%;
     --card: 0 0% 100%;
@@ -120,11 +120,11 @@
     @apply backdrop-blur-2xl bg-card/80 border border-foreground/10;
   }
   .institute-logo { background: hsl(var(--logo-surface)); }
-  [data-theme="academic-editorial"] .glass {
+   [data-mode="light"] .glass {
     @apply bg-card/80 border-border;
     backdrop-filter: blur(8px);
   }
-  [data-theme="academic-editorial"] .glass-strong {
+   [data-mode="light"] .glass-strong {
     @apply bg-card/95 border-border;
     backdrop-filter: blur(8px);
   }
@@ -156,6 +156,10 @@
     background: linear-gradient(125deg, hsl(var(--primary) / 0.12), transparent 42%);
   }
   .bento-tile:hover::after { opacity: 1; }
+  .tool-tile { transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease, background-color 220ms ease; }
+  .tool-tile:hover, .tool-tile:focus-visible { transform: translateY(-3px); box-shadow: var(--shadow-elevated); }
+  .tool-tile svg { transition: transform 220ms ease; }
+  .tool-tile:hover svg { transform: translateY(-2px) rotate(-4deg); }
 }
 
 @layer utilities {
@@ -193,4 +197,5 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+  .tool-tile:hover, .tool-tile:focus-visible, .tool-tile:hover svg { transform: none; }
 }
