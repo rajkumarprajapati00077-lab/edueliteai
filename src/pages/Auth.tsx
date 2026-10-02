@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Mail, Lock, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { PageTransition } from "@/components/PageTransition";
@@ -9,7 +10,7 @@ import { LogoMark } from "@/components/Logo";
 import { toast } from "sonner";
 
 const Auth = () => {
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [mode, setMode] = useState<"signin" | "signup" | "forgot">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -21,7 +22,14 @@ const Auth = () => {
     e.preventDefault();
     setBusy(true);
     try {
-      if (mode === "signup") {
+      if (mode === "forgot") {
+        const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+          redirectTo: `${window.location.origin}/reset-password`,
+        });
+        if (error) throw error;
+        toast.success("If this email belongs to an account, a reset link is on its way.");
+        setMode("signin");
+      } else if (mode === "signup") {
         const { error } = await supabase.auth.signUp({
           email, password,
           options: { emailRedirectTo: `${window.location.origin}/dashboard` },
@@ -63,26 +71,26 @@ const Auth = () => {
             <span className="font-display font-bold tracking-tight text-xl">Edu<span className="text-gradient">Elite</span></span>
           </Link>
           <h1 className="font-display text-2xl font-bold tracking-tight">
-            {mode === "signin" ? "Welcome back" : "Create your account"}
+            {mode === "signin" ? "Welcome back" : mode === "signup" ? "Create your account" : "Reset your password"}
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            {mode === "signin" ? "Sign in to your study workspace." : "Start your CA / CS / CMA prep with EduElite."}
+            {mode === "signin" ? "Sign in to your study workspace." : mode === "signup" ? "Start your CA / CS / CMA prep with EduElite." : "Enter your account email to receive a reset link."}
           </p>
 
-          <button
+          {mode !== "forgot" && <Button
             onClick={google}
             disabled={busy}
-            className="btn-3d mt-6 w-full glass rounded-xl py-2.5 text-sm font-medium disabled:opacity-50"
+            variant="outline" className="btn-3d mt-6 w-full min-h-11"
           >
             Continue with Google
-          </button>
+          </Button>}
 
-          <div className="my-5 flex items-center gap-3 text-[10px] uppercase tracking-widest text-muted-foreground">
+          {mode !== "forgot" && <div className="my-5 flex items-center gap-3 text-[10px] uppercase tracking-widest text-muted-foreground">
             <span className="flex-1 h-px bg-border" /> or email <span className="flex-1 h-px bg-border" />
-          </div>
+          </div>}
 
-          <form onSubmit={submit} className="space-y-3">
-            <label className="block">
+          <form onSubmit={submit} className={mode === "forgot" ? "mt-6 space-y-3" : "space-y-3"}>
+             {mode !== "forgot" && <label className="block">
               <div className="flex items-center gap-2 glass rounded-xl px-3 py-2.5">
                 <Mail className="h-4 w-4 text-muted-foreground" />
                 <input
@@ -101,21 +109,22 @@ const Auth = () => {
                   className="flex-1 bg-transparent outline-none text-sm placeholder:text-muted-foreground"
                 />
               </div>
-            </label>
-            <button
+             </label>}
+             {mode === "signin" && <div className="text-right"><Button type="button" variant="link" className="h-9 px-0 text-xs" onClick={() => setMode("forgot")}>Forgot password?</Button></div>}
+             <Button
               type="submit" disabled={busy}
-              className="btn-3d w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-primary py-2.5 font-semibold text-primary-foreground glow-primary disabled:opacity-50"
+              className="btn-3d w-full min-h-11 bg-gradient-primary font-semibold glow-primary"
             >
-              {busy ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
+              {busy ? "Please wait…" : mode === "signin" ? "Sign in" : mode === "signup" ? "Create account" : "Send reset link"}
               <ArrowRight className="h-4 w-4" />
-            </button>
+             </Button>
           </form>
 
           <p className="mt-5 text-center text-xs text-muted-foreground">
-            {mode === "signin" ? "New to EduElite? " : "Already have an account? "}
-            <button onClick={() => setMode(mode === "signin" ? "signup" : "signin")} className="text-primary hover:underline">
+            {mode === "signin" ? "New to EduElite? " : mode === "signup" ? "Already have an account? " : "Remembered your password? "}
+            <Button variant="link" className="h-9 px-1 text-xs" onClick={() => setMode(mode === "signin" ? "signup" : "signin")}>
               {mode === "signin" ? "Create one" : "Sign in"}
-            </button>
+            </Button>
           </p>
         </motion.div>
       </div>
