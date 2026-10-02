@@ -27,6 +27,7 @@ const Music = lazy(() => import("./pages/Music.tsx"));
 const Quiz = lazy(() => import("./pages/Quiz.tsx"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword.tsx"));
 const AIToolsHub = lazy(() => import("./pages/AIToolsHub.tsx"));
+const InfoPage = lazy(() => import("./pages/InfoPage.tsx"));
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,7 @@ const AnimatedRoutes = () => {
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Index />} />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/info/:page" element={<InfoPage />} />
         <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
         <Route path="/chat" element={<RequireAuth><Chat /></RequireAuth>} />
         <Route path="/calendar" element={<RequireAuth><StudyCalendar /></RequireAuth>} />
