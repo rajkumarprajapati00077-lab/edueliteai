@@ -90,7 +90,7 @@ const Auth = () => {
           </div>}
 
           <form onSubmit={submit} className={mode === "forgot" ? "mt-6 space-y-3" : "space-y-3"}>
-             {mode !== "forgot" && <label className="block">
+             <label className="block">
               <div className="flex items-center gap-2 glass rounded-xl px-3 py-2.5">
                 <Mail className="h-4 w-4 text-muted-foreground" />
                 <input
@@ -100,7 +100,7 @@ const Auth = () => {
                 />
               </div>
             </label>
-            <label className="block">
+             {mode !== "forgot" && <label className="block">
               <div className="flex items-center gap-2 glass rounded-xl px-3 py-2.5">
                 <Lock className="h-4 w-4 text-muted-foreground" />
                 <input
