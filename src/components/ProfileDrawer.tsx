@@ -124,20 +124,6 @@ export const ProfileDrawer = ({ open, onClose }: Props) => {
                   </div>
                 </div>
 
-                <div className="mt-5">
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground px-1 mb-2 flex items-center gap-1">
-                    <Palette className="h-3 w-3" /> Theme
-                  </p>
-                  <div className="grid grid-cols-2 gap-2">
-                    {THEMES.map((t) => (
-                      <button key={t.id} onClick={() => pickTheme(t.id)}
-                        className={`btn-3d rounded-xl p-2 text-[10px] border transition-all ${theme === t.id ? "border-primary bg-gradient-primary text-primary-foreground" : "border-border bg-card/40"}`}>
-                        {t.label.split(" ")[0]}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
                 <div className="mt-6 rounded-xl glass p-3 text-[11px] text-muted-foreground flex gap-2">
                   <ShieldCheck className="h-4 w-4 text-success shrink-0 mt-0.5" />
                   <span>EduElite uses AI strictly to help students prepare for their exams. Your notes and chats are private to your account.</span>

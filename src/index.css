@@ -4,7 +4,7 @@
 
 /* EduElite academic palette: paper/ink by day, graphite/coral by night. */
 @layer base {
-  [data-mode="dark"] {
+  :root[data-mode="dark"] {
     --background: 210 9% 11%;
     --foreground: 80 18% 96%;
     --card: 210 12% 15%;
