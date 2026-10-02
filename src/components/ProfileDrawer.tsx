@@ -1,11 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { LogOut, LayoutDashboard, Settings as SettingsIcon, Palette, Target, Flame, X, ShieldCheck } from "lucide-react";
+import { LogOut, LayoutDashboard, Settings as SettingsIcon, Target, Flame, X, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
 import { useStreak } from "@/hooks/useStreak";
-import { useTheme, THEMES, ThemeName } from "@/contexts/ThemeContext";
 import { useExamInfo } from "@/hooks/useExamInfo";
 import { toast } from "sonner";
 
@@ -13,9 +12,8 @@ type Props = { open: boolean; onClose: () => void };
 
 export const ProfileDrawer = ({ open, onClose }: Props) => {
   const { user, signOut } = useAuth();
-  const { profile, update } = useProfile();
+  const { profile } = useProfile();
   const streak = useStreak();
-  const { theme, setTheme } = useTheme();
   const exam = profile?.exam_track ?? "CA Final";
   const info = useExamInfo(open ? exam : undefined);
   const nav = useNavigate();
@@ -32,10 +30,6 @@ export const ProfileDrawer = ({ open, onClose }: Props) => {
   const target = liveDate ? new Date(liveDate + (liveDate.length === 10 ? "T09:00:00" : "")).getTime() : null;
   const daysLeft = target ? Math.max(0, Math.ceil((target - Date.now()) / 86400000)) : null;
 
-  const pickTheme = async (t: ThemeName) => {
-    setTheme(t);
-    try { await update({ theme: t }); } catch { /* silent */ }
-  };
 
   const out = async () => {
     await signOut();
@@ -126,20 +120,6 @@ export const ProfileDrawer = ({ open, onClose }: Props) => {
                         <it.icon className="h-4 w-4 text-muted-foreground" />
                         {it.label}
                       </Link>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="mt-5">
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground px-1 mb-2 flex items-center gap-1">
-                    <Palette className="h-3 w-3" /> Theme
-                  </p>
-                  <div className="grid grid-cols-2 gap-2">
-                    {THEMES.map((t) => (
-                      <button key={t.id} onClick={() => pickTheme(t.id)}
-                        className={`btn-3d rounded-xl p-2 text-[10px] border transition-all ${theme === t.id ? "border-primary bg-gradient-primary text-primary-foreground" : "border-border bg-card/40"}`}>
-                        {t.label.split(" ")[0]}
-                      </button>
                     ))}
                   </div>
                 </div>

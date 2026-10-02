@@ -1,10 +1,9 @@
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { MobileNav } from "@/components/MobileNav";
 import { PageTransition } from "@/components/PageTransition";
-import { Target, Palette, Timer, Check, CalendarIcon, Wand2 } from "lucide-react";
+import { Target, Timer, CalendarIcon, Wand2 } from "lucide-react";
 import { toast } from "sonner";
 import { useProfile } from "@/hooks/useProfile";
-import { useTheme, THEMES, ThemeName } from "@/contexts/ThemeContext";
 import { useExamInfo } from "@/hooks/useExamInfo";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -13,7 +12,6 @@ import { cn } from "@/lib/utils";
 
 const Settings = () => {
   const { profile, update, loading } = useProfile();
-  const { theme, setTheme } = useTheme();
   const live = useExamInfo(profile?.exam_track);
 
   if (loading || !profile) {
@@ -32,7 +30,6 @@ const Settings = () => {
     try { await update(patch); toast.success("Saved"); } catch (e) { toast.error(e instanceof Error ? e.message : "Save failed"); }
   };
 
-  const pickTheme = (t: ThemeName) => { setTheme(t); save({ theme: t }); };
 
   const isAuto = !profile.attempt_date;
   const liveIso = live.data?.next_attempt_iso ?? null;
@@ -134,21 +131,6 @@ const Settings = () => {
             <span className="text-xs text-muted-foreground ml-2">minutes per day</span>
           </section>
 
-          <section className="mt-5 glass-strong rounded-2xl p-6 shadow-3d">
-            <h2 className="font-semibold flex items-center gap-2 mb-4"><Palette className="h-4 w-4 text-primary" /> Theme</h2>
-            <div className="grid sm:grid-cols-2 gap-3">
-              {THEMES.map((t) => (
-                <button key={t.id} onClick={() => pickTheme(t.id)}
-                  className={`btn-3d text-left rounded-2xl p-4 border transition-all ${theme === t.id ? "border-primary bg-gradient-primary text-primary-foreground glow-primary" : "border-border bg-card/40 hover:border-primary/50"}`}>
-                  <div className="flex items-center justify-between">
-                    <p className="font-display font-semibold">{t.label}</p>
-                    {theme === t.id && <Check className="h-4 w-4" />}
-                  </div>
-                  <p className={`text-xs mt-1 ${theme === t.id ? "opacity-90" : "text-muted-foreground"}`}>{t.tagline}</p>
-                </button>
-              ))}
-            </div>
-          </section>
         </main>
       </div>
     </PageTransition>

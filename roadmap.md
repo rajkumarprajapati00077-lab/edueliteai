@@ -1,3 +1,6 @@
 - [x] Remove Premium theme and normalize old preferences.
 - [x] Redesign the home page as a compact visual tool dashboard with real institute logos and glass accents.
 - [x] Verify both themes and mobile/desktop layouts.
+- [ ] Set Academic as the only theme, with light/dark display mode and comfortable landing motion.
+- [ ] Add recovery link, trust pages, demo/showcase, accurate plan information, and footer links.
+- [ ] Clean up accessibility, branding, mobile layout, and verify key flows.
