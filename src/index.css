@@ -160,6 +160,9 @@
   .tool-tile:hover, .tool-tile:focus-visible { transform: translateY(-3px); box-shadow: var(--shadow-elevated); }
   .tool-tile svg { transition: transform 220ms ease; }
   .tool-tile:hover svg { transform: translateY(-2px) rotate(-4deg); }
+  .institute-track { width: max-content; animation: institute-scroll 26s linear infinite; }
+  .institute-marquee:hover .institute-track, .institute-marquee:focus-within .institute-track { animation-play-state: paused; }
+  @keyframes institute-scroll { to { transform: translateX(-50%); } }
 }
 
 @layer utilities {

@@ -33,7 +33,7 @@ export const Navbar = () => {
               <li key={l.to}>
                 <Link
                   to={l.to}
-                  className={`px-4 py-2 rounded-lg text-sm transition-colors ${
+                  className={`px-4 py-2 rounded-full text-sm transition-colors ${
                     pathname === l.to
                       ? "text-foreground bg-secondary"
                       : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
@@ -45,10 +45,10 @@ export const Navbar = () => {
             ))}
           </ul>
            <div className="flex items-center gap-1 sm:gap-2">
-             <Button variant="ghost" size="icon" onClick={toggleMode} aria-label={mode === "light" ? "Switch to dark display" : "Switch to light display"} title={mode === "light" ? "Dark display" : "Light display"} className="h-11 w-11 shrink-0">
+              <Button variant="ghost" size="icon" onClick={toggleMode} aria-label={mode === "light" ? "Switch to dark display" : "Switch to light display"} title={mode === "light" ? "Dark display" : "Light display"} className="h-11 w-11 shrink-0 rounded-full">
                {mode === "light" ? <Moon /> : <Sun />}
              </Button>
-             <Button asChild size="sm" className="btn-3d min-h-11 bg-gradient-primary font-semibold shadow-3d">
+              <Button asChild size="sm" className="btn-3d min-h-11 rounded-full bg-gradient-primary font-semibold shadow-3d">
                <Link to={cta.to}>{cta.label}</Link>
              </Button>
            </div>
