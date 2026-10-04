@@ -89,8 +89,35 @@ const Landing = () => {
               <div className="mt-5 flex items-center gap-2 text-[11px] text-muted-foreground"><Sparkles className="h-3.5 w-3.5 text-primary" /> Built for independent CA, CS & CMA preparation.</div>
             </div>
           </section>
-          <section className="px-4 py-12 sm:px-7" aria-label="Privacy"><div className="mx-auto max-w-5xl"><PrivacyNotice /></div></section>
-          <footer className="mx-auto flex max-w-6xl items-center justify-between border-t border-border/70 px-4 py-5 text-xs text-muted-foreground sm:px-7"><span>© 2026 EduElite</span><span>Independent platform · Not endorsed by ICAI, ICSI or ICMAI</span></footer>
+          <section className="px-4 py-14 sm:px-7" aria-labelledby="how-title">
+            <div className="mx-auto max-w-6xl">
+              <h2 id="how-title" className="font-display text-3xl sm:text-4xl">How it works</h2>
+              <ol className="mt-6 grid gap-3 sm:grid-cols-3">
+                {[
+                  ["1", "Pick your course", "CA, CS or CMA — level and attempt date."],
+                  ["2", "Study with AI", "Syllabus, notes, tutor and quizzes in one place."],
+                  ["3", "Track your attempt", "Live countdown and planner keep you on pace."],
+                ].map(([n, t, d], i) => (
+                  <motion.li key={n} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="tool-tile rounded-md border border-border/70 bg-card/60 p-5">
+                    <span className="font-display text-3xl text-primary">{n}</span>
+                    <h3 className="mt-2 text-base font-semibold">{t}</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">{d}</p>
+                  </motion.li>
+                ))}
+              </ol>
+              <p className="mt-6 text-sm text-muted-foreground">Free to use with an account. No card required.</p>
+            </div>
+          </section>
+          <section className="px-4 pb-12 sm:px-7" aria-label="Privacy"><div className="mx-auto max-w-5xl"><PrivacyNotice /></div></section>
+          <footer className="mx-auto flex max-w-6xl flex-col gap-3 border-t border-border/70 px-4 py-5 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-7">
+            <span>© 2026 EduElite · Not endorsed by ICAI, ICSI or ICMAI</span>
+            <nav aria-label="Footer" className="flex flex-wrap gap-4">
+              <Link to="/info/about" className="hover:text-foreground">About</Link>
+              <Link to="/info/privacy" className="hover:text-foreground">Privacy</Link>
+              <Link to="/info/terms" className="hover:text-foreground">Terms</Link>
+              <Link to="/info/contact" className="hover:text-foreground">Contact</Link>
+            </nav>
+          </footer>
         </main>
       </div>
     </PageTransition>
