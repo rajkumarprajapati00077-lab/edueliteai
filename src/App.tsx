@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { lazy, Suspense } from "react";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -23,11 +23,12 @@ const Syllabus = lazy(() => import("./pages/Syllabus.tsx"));
 const InterLinkage = lazy(() => import("./pages/InterLinkage.tsx"));
 const SurvivalPlanner = lazy(() => import("./pages/SurvivalPlanner.tsx"));
 const Notes = lazy(() => import("./pages/Notes.tsx"));
-const Music = lazy(() => import("./pages/Music.tsx"));
 const Quiz = lazy(() => import("./pages/Quiz.tsx"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword.tsx"));
 const AIToolsHub = lazy(() => import("./pages/AIToolsHub.tsx"));
 const InfoPage = lazy(() => import("./pages/InfoPage.tsx"));
+const CopyChecker = lazy(() => import("./pages/CopyChecker.tsx"));
+const Pro = lazy(() => import("./pages/Pro.tsx"));
 
 const queryClient = new QueryClient();
 
@@ -53,9 +54,11 @@ const AnimatedRoutes = () => {
         <Route path="/syllabus" element={<RequireAuth><Syllabus /></RequireAuth>} />
         <Route path="/inter-linkage" element={<RequireAuth><InterLinkage /></RequireAuth>} />
         <Route path="/survival-planner" element={<RequireAuth><SurvivalPlanner /></RequireAuth>} />
-        <Route path="/music" element={<RequireAuth><Music /></RequireAuth>} />
+        <Route path="/music" element={<Navigate to="/pro" replace />} />
         <Route path="/quiz" element={<RequireAuth><Quiz /></RequireAuth>} />
         <Route path="/ai-tools" element={<RequireAuth><AIToolsHub /></RequireAuth>} />
+        <Route path="/copy-checker" element={<RequireAuth><CopyChecker /></RequireAuth>} />
+        <Route path="/pro" element={<Pro />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
         <Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />

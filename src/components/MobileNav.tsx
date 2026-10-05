@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X, LayoutDashboard, MessageSquareCode, CalendarDays, User as UserIcon, Settings, FileText, Library, Network, Timer, Music as MusicIcon, Brain, Sparkles } from "lucide-react";
+import { Menu, X, LayoutDashboard, MessageSquareCode, CalendarDays, User as UserIcon, Settings, FileText, Library, Network, Timer, Music as MusicIcon, Brain, Sparkles, FileCheck2 } from "lucide-react";
 
 const items = [
   { to: "/dashboard", icon: LayoutDashboard, label: "Overview" },
@@ -12,7 +12,8 @@ const items = [
   { to: "/inter-linkage", icon: Network, label: "Inter-Linkage" },
   { to: "/survival-planner", icon: Timer, label: "Survival Planner" },
   { to: "/quiz", icon: Brain, label: "Quizzes" },
-  { to: "/music", icon: MusicIcon, label: "Study Music" },
+  { to: "/copy-checker", icon: FileCheck2, label: "Copy Checker" },
+  { to: "/pro", icon: MusicIcon, label: "Focus Music · Pro" },
   { to: "/profile", icon: UserIcon, label: "Profile" },
   { to: "/settings", icon: Settings, label: "Settings" },
 ];
@@ -25,7 +26,7 @@ export const MobileNav = () => {
       <button
         onClick={() => setOpen(true)}
         aria-label="Open navigation"
-        className="fixed top-4 left-4 z-40 h-11 w-11 rounded-2xl glass-strong grid place-items-center shadow-3d"
+        className="fixed left-4 z-40 h-11 w-11 rounded-xl glass-strong grid place-items-center shadow-3d top-[max(1rem,env(safe-area-inset-top))]"
       >
         <Menu className="h-5 w-5" />
       </button>

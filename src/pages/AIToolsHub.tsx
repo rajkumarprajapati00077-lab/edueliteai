@@ -3,7 +3,7 @@ import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { MobileNav } from "@/components/MobileNav";
 import { PageTransition } from "@/components/PageTransition";
 import {
-  MessageCircle, FileText, Brain, Network, LifeBuoy, Sparkles,
+  MessageCircle, FileText, Brain, Network, LifeBuoy, Sparkles, FileCheck2,
 } from "lucide-react";
 
 const tools = [
@@ -12,6 +12,7 @@ const tools = [
   { to: "/quiz",            icon: Brain,         title: "AI Quiz Generator",    desc: "Auto-built MCQ quizzes for every chapter with linked official sources.",               accent: "from-emerald-500 to-teal-500" },
   { to: "/inter-linkage",   icon: Network,       title: "Inter-Linkage Mapper", desc: "See how Tax, Law, FR, Audit and Costing concepts connect across papers.",              accent: "from-cyan-500 to-blue-500" },
   { to: "/survival-planner",icon: LifeBuoy,      title: "Survival Planner",     desc: "Last-30-days revision plan auto-built from your pending backlog.",                     accent: "from-amber-500 to-orange-500" },
+  { to: "/copy-checker",   icon: FileCheck2,    title: "Paper Copy Checker",   desc: "Upload a handwritten answer copy for detailed marks and feedback.",                    accent: "from-primary to-accent" },
 ];
 
 const AIToolsHub = () => {
@@ -22,7 +23,7 @@ const AIToolsHub = () => {
         <MobileNav />
         <main className="flex-1 lg:ml-72 p-6 lg:p-10">
           <div className="max-w-5xl mx-auto pt-12 lg:pt-0 space-y-8">
-            <div>
+            <div className="text-center">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
                 <Sparkles className="h-3.5 w-3.5" /> AI Tools Hub
               </div>
@@ -34,7 +35,7 @@ const AIToolsHub = () => {
                 <Link
                   key={t.to}
                   to={t.to}
-                  className="group rounded-2xl glass p-5 hover:bg-secondary/40 transition-all hover:-translate-y-1"
+                  className="group rounded-xl glass p-5 hover:bg-secondary/40 transition-all hover:-translate-y-1"
                 >
                   <div className={`h-11 w-11 rounded-xl bg-gradient-to-br ${t.accent} grid place-items-center text-primary-foreground shadow-3d mb-3`}>
                     <t.icon className="h-5 w-5" />

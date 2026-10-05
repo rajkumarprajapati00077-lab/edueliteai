@@ -17,4 +17,6 @@ if (isPreview || isInIframe) {
     .catch(() => {});
 }
 
-createRoot(document.getElementById("root")!).render(<App />);
+const root = document.getElementById("root");
+if (!root) throw new Error("App root is missing");
+createRoot(root).render(<App />);

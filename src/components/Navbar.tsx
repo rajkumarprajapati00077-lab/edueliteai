@@ -3,8 +3,6 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun } from "lucide-react";
-import { useTheme } from "@/contexts/ThemeContext";
 
 const links = [
   { to: "/", label: "Home" },
@@ -16,7 +14,6 @@ const links = [
 export const Navbar = () => {
   const { pathname } = useLocation();
   const { user } = useAuth();
-  const { mode, toggleMode } = useTheme();
   const cta = user ? { to: "/dashboard", label: "Open workspace" } : { to: "/auth", label: "Sign in" };
   return (
     <motion.header
@@ -44,10 +41,7 @@ export const Navbar = () => {
               </li>
             ))}
           </ul>
-           <div className="flex items-center gap-1 sm:gap-2">
-              <Button variant="ghost" size="icon" onClick={toggleMode} aria-label={mode === "light" ? "Switch to dark display" : "Switch to light display"} title={mode === "light" ? "Dark display" : "Light display"} className="h-11 w-11 shrink-0 rounded-full">
-               {mode === "light" ? <Moon /> : <Sun />}
-             </Button>
+            <div className="flex items-center gap-1 sm:gap-2">
               <Button asChild size="sm" className="btn-3d min-h-11 rounded-full bg-gradient-primary font-semibold shadow-3d">
                <Link to={cta.to}>{cta.label}</Link>
              </Button>
