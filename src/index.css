@@ -4,51 +4,6 @@
 
 /* EduElite academic palette: paper/ink by day, graphite/coral by night. */
 @layer base {
-  :root[data-mode="dark"] {
-    --background: 210 9% 11%;
-    --foreground: 80 18% 96%;
-    --card: 210 12% 15%;
-    --card-foreground: 80 18% 96%;
-    --popover: 210 12% 15%;
-    --popover-foreground: 80 18% 96%;
-    --primary: 9 100% 70%;
-    --primary-foreground: 210 9% 11%;
-    --primary-glow: 9 100% 76%;
-    --accent: 163 35% 62%;
-    --accent-foreground: 210 9% 11%;
-    --accent-glow: 163 35% 72%;
-    --secondary: 205 16% 21%;
-    --secondary-foreground: 80 18% 96%;
-    --muted: 205 12% 19%;
-    --muted-foreground: 200 8% 69%;
-    --destructive: 0 76% 58%;
-    --destructive-foreground: 0 0% 100%;
-    --success: 153 48% 55%;
-    --border: 205 12% 27%;
-    --input: 205 12% 23%;
-    --ring: 9 100% 70%;
-    --logo-surface: 0 0% 100%;
-    --radius: 0.5rem;
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-    --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-glow)));
-    --gradient-hero: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--background)));
-    --gradient-card: linear-gradient(145deg, hsl(var(--card)), hsl(var(--secondary)));
-    --gradient-text: linear-gradient(135deg, hsl(var(--foreground)), hsl(var(--primary)));
-    --shadow-glow: 0 14px 44px -20px hsl(var(--primary) / 0.48);
-    --shadow-glow-accent: 0 14px 44px -20px hsl(var(--accent) / 0.48);
-    --shadow-elevated: 0 24px 50px -28px hsl(210 20% 2% / 0.7);
-    --shadow-3d: 0 1px 0 hsl(var(--foreground) / 0.13) inset, 0 8px 18px -12px hsl(210 20% 2% / 0.65);
-    --font-display: 'Instrument Serif', Georgia, serif;
-    --font-body: 'Work Sans', system-ui, sans-serif;
-    --sidebar-background: 210 9% 11%;
-    --sidebar-foreground: 200 8% 69%;
-    --sidebar-primary: 9 100% 70%;
-    --sidebar-primary-foreground: 210 9% 11%;
-    --sidebar-accent: 205 16% 21%;
-    --sidebar-accent-foreground: 80 18% 96%;
-    --sidebar-border: 205 12% 27%;
-    --sidebar-ring: 9 100% 70%;
-  }
   :root, [data-mode="light"] {
     --background: 80 18% 96%;
     --foreground: 210 9% 11%;
@@ -100,11 +55,13 @@
   html {
     @apply scroll-smooth;
     font-family: var(--font-body);
+    color-scheme: light;
   }
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: 'cv11', 'ss01', 'ss03', 'ss07';
-
+    min-width: 320px;
+    padding-bottom: env(safe-area-inset-bottom);
   }
   h1, h2, h3, .font-display {
     font-family: var(--font-display);
