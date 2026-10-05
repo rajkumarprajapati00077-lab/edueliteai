@@ -1,10 +1,10 @@
 - [x] Remove Premium theme and normalize old preferences.
 - [x] Redesign the home page as a compact visual tool dashboard with real institute logos and glass accents.
 - [x] Verify both themes and mobile/desktop layouts.
-- [x] Set Academic as the only theme, with light/dark display mode and comfortable landing motion.
+- [x] Set Academic as the only theme, with a consistent light display and comfortable landing motion.
 - [x] Add recovery link, trust pages, demo/showcase, accurate plan information, and footer links.
 - [x] Clean up accessibility, branding, mobile layout, and verify key flows.
-- [ ] Round interactive controls and feature tiles; move institute logos into an accessible animated bar.
-- [ ] Gate Focus Music with Pro prompts and show pricing without implying payment is active.
-- [ ] Add Paper Copy Checker entry points, upload/subject/sample interface and one-free-use flow; block submissions until email delivery is configured.
+- [x] Round interactive controls and feature tiles; move institute logos into an accessible animated bar.
+- [x] Gate Focus Music with Pro prompts and show pricing without implying payment is active.
+- [x] Add Paper Copy Checker entry points, upload/subject/sample interface and one-free-use flow; block submissions until email delivery is configured.
 - [ ] Verify desktop/mobile navigation, build signal, and clearly report email/domain blocker.

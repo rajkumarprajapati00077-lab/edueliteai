@@ -24,8 +24,8 @@ export default defineConfig(({ mode }) => ({
         name: "EduElite — AI Study Workspace",
         short_name: "EduElite",
         description: "AI-powered study workspace for CA, CS & CMA students",
-        theme_color: "#0b1120",
-        background_color: "#0b1120",
+        theme_color: "#f4f5f2",
+        background_color: "#f4f5f2",
         display: "standalone",
         start_url: "/",
         icons: [
