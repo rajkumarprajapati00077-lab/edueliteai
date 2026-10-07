@@ -38,6 +38,30 @@ export type Database = {
         }
         Relationships: []
       }
+      copy_checks: {
+        Row: {
+          created_at: string
+          id: string
+          paper: string
+          result: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          paper: string
+          result: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          paper?: string
+          result?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       daily_goal_log: {
         Row: {
           created_at: string
