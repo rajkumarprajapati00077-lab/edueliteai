@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, BookOpen, Brain, CalendarDays, FileCheck2, FileText, LockKeyhole, MessageCircle, Music2, Network, Sparkles, Timer } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
@@ -11,6 +11,7 @@ import studentImage from "@/assets/home-study.jpg";
 import icaiLogo from "@/assets/authorities/icai.png";
 import icsiLogo from "@/assets/authorities/icsi.png";
 import icmaiLogo from "@/assets/authorities/icmai.jpg";
+import corporateSketch from "@/assets/corporate-world-sketch.jpg";
 
 const institutes = [
   { name: "ICAI", course: "CA", logo: icaiLogo, href: "https://www.icai.org/" },
@@ -32,6 +33,7 @@ const tools = [
 
 const Landing = () => {
   const { user } = useAuth();
+  const reduceMotion = useReducedMotion();
   const path = (to: string) => user ? to : "/auth";
 
   return (
@@ -114,6 +116,30 @@ const Landing = () => {
             </div>
           </section>
           <section className="px-4 pb-12 sm:px-7" aria-label="Privacy"><div className="mx-auto max-w-5xl"><PrivacyNotice /></div></section>
+          <section className="border-t border-border/50 px-4 pb-10 pt-8 sm:px-7 sm:pt-12" aria-labelledby="corporate-world-title">
+            <div className="mx-auto max-w-6xl">
+              <div className="flex flex-col items-center gap-3 text-center">
+                <p className="text-xs font-semibold uppercase text-muted-foreground">CA · CS · CMA</p>
+                <h2 id="corporate-world-title" className="font-display text-3xl sm:text-4xl">Tomorrow’s corporate leaders.</h2>
+                <span className="h-px w-12 bg-accent" aria-hidden="true" />
+              </div>
+              <div className="mt-6 overflow-hidden py-3 sm:mt-8">
+                <motion.img
+                  src={corporateSketch}
+                  alt="Pencil sketch connecting global stock markets, accounting, corporate leadership and governance around a globe."
+                  width={1536}
+                  height={768}
+                  loading="lazy"
+                  decoding="async"
+                  initial={{ y: 0 }}
+                  whileInView={reduceMotion ? { y: 0 } : { y: [0, -6, 0] }}
+                  viewport={{ amount: 0.2 }}
+                  transition={reduceMotion ? { duration: 0 } : { duration: 9, repeat: Infinity, ease: "easeInOut" }}
+                  className="corporate-sketch block h-auto w-full mix-blend-multiply"
+                />
+              </div>
+            </div>
+          </section>
           <footer className="mx-auto flex max-w-6xl flex-col gap-3 border-t border-border/70 px-4 py-5 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-7">
             <span>© 2026 EduElite · Not endorsed by ICAI, ICSI or ICMAI</span>
             <nav aria-label="Footer" className="flex flex-wrap gap-4">
