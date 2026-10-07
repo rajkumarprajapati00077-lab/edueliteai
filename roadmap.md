@@ -7,4 +7,4 @@
 - [x] Round interactive controls and feature tiles; move institute logos into an accessible animated bar.
 - [x] Gate Focus Music with Pro prompts and show pricing without implying payment is active.
 - [x] Add Paper Copy Checker entry points, upload/subject/sample interface and one-free-use flow; block submissions until email delivery is configured.
-- [ ] Verify desktop/mobile navigation, build signal, and clearly report email/domain blocker.
+- [x] Verify desktop/mobile navigation, build signal, and clearly report email/domain blocker.

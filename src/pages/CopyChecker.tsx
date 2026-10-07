@@ -92,7 +92,6 @@ const CopyChecker = () => {
               <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary"><LockKeyhole className="h-3.5 w-3.5" /> PRO · 1 FREE</span>
             </div>
 
-            {locked && !result ? null : null}
 
             {locked ? (
               <section className="mt-6 rounded-xl border border-primary/30 bg-primary/5 p-5 text-center">
