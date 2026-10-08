@@ -16,7 +16,7 @@ export const parseChecked = (raw: string): Checked | null => {
 const Mark = ({ s }: { s: Point["status"] }) =>
   s === "right" ? <Check className="h-4 w-4 shrink-0 text-success" strokeWidth={3} aria-label="Correct" />
   : s === "wrong" ? <X className="h-4 w-4 shrink-0 text-destructive" strokeWidth={3} aria-label="Wrong" />
-  : <Minus className="h-4 w-4 shrink-0 text-warning" strokeWidth={3} aria-label="Missing" />;
+  : <Minus className="h-4 w-4 shrink-0 text-accent" strokeWidth={3} aria-label="Missing" />;
 
 export const downloadCheckedPdf = (c: Checked, name: string) => {
   const doc = new jsPDF({ unit: "pt", format: "a4" });
