@@ -8,4 +8,6 @@
 - [x] Gate Focus Music with Pro prompts and show pricing without implying payment is active.
 - [x] Add Paper Copy Checker entry points, upload/subject/sample interface and one-free-use flow; block submissions until email delivery is configured.
 - [x] Verify desktop/mobile navigation, build signal, and clearly report email/domain blocker.
-- [ ] Add and verify the animated corporate-world sketch below the home-page privacy section.
+- [x] Animated sketch: laptop chart + planes.
+- [x] Copy checker: examiner-grade structured marking, ticks/crosses, PDF download.
+- [ ] Email checked copy to user — blocked on verified email domain.
