@@ -12,6 +12,7 @@ import icaiLogo from "@/assets/authorities/icai.png";
 import icsiLogo from "@/assets/authorities/icsi.png";
 import icmaiLogo from "@/assets/authorities/icmai.jpg";
 import corporateSketch from "@/assets/corporate-world-sketch.jpg";
+import { SketchMotion } from "@/components/SketchMotion";
 
 const institutes = [
   { name: "ICAI", course: "CA", logo: icaiLogo, href: "https://www.icai.org/" },
@@ -123,7 +124,7 @@ const Landing = () => {
                 <h2 id="corporate-world-title" className="font-display text-3xl sm:text-4xl">Tomorrow’s corporate leaders.</h2>
                 <span className="h-px w-12 bg-accent" aria-hidden="true" />
               </div>
-              <div className="mt-6 overflow-hidden py-3 sm:mt-8">
+              <div className="relative mt-6 overflow-hidden py-3 sm:mt-8">
                 <motion.img
                   src={corporateSketch}
                   alt="Pencil sketch connecting global stock markets, accounting, corporate leadership and governance around a globe."
@@ -137,6 +138,7 @@ const Landing = () => {
                   transition={reduceMotion ? { duration: 0 } : { duration: 9, repeat: Infinity, ease: "easeInOut" }}
                   className="corporate-sketch block h-auto w-full mix-blend-multiply"
                 />
+                {!reduceMotion && <SketchMotion />}
               </div>
             </div>
           </section>
