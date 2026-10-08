@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { CheckedCopy, parseChecked } from "@/components/CheckedCopy";
 
 const papers = [
   "CA Foundation — Accounting", "CA Foundation — Business Laws", "CA Inter — Advanced Accounting",
@@ -114,13 +115,14 @@ const CopyChecker = () => {
                   </Select>
                 </div>
                 <Button onClick={submit} disabled={busy || !qp || !ans || !paper} className="btn-3d mt-4 h-12 w-full rounded-xl">
-                  {busy ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Checking your copy… (1–2 min)</> : "Check my copy free"}
+                  {busy ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Examiner is checking your copy… (2–4 min)</> : "Check my copy free"}
                 </Button>
                 <p className="mt-3 text-center text-xs text-muted-foreground">Clear, well-lit scans give the most accurate marks.</p>
               </section>
             )}
 
-            {result && (
+            {result && parseChecked(result) && <CheckedCopy c={parseChecked(result)!} name={user?.user_metadata?.full_name || user?.email || "Student"} />}
+            {result && !parseChecked(result) && (
               <section className="mt-6 rounded-xl border border-border bg-card p-4 sm:p-6">
                 <h2 className="font-semibold">Checked &amp; evaluated copy</h2>
                 <pre className="mt-3 whitespace-pre-wrap font-sans text-sm leading-relaxed">{result}</pre>

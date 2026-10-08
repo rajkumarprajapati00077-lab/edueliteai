@@ -77,6 +77,10 @@
     @apply backdrop-blur-2xl bg-card/80 border border-foreground/10;
   }
   .institute-logo { background: hsl(var(--logo-surface)); }
+  .chart-line { stroke-dasharray: 1; stroke-dashoffset: 1; animation: chart-draw 6s ease-in-out infinite; }
+  .chart-down { animation-delay: 3s; }
+  @keyframes chart-draw { 0% { stroke-dashoffset: 1; opacity: 1; } 45%, 75% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .sketch-motion { display: none; } }
   .corporate-sketch {
     mask-image: linear-gradient(to bottom, transparent, black 5%, black 90%, transparent);
   }
