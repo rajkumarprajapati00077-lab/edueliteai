@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { Mail, Lock, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { PageTransition } from "@/components/PageTransition";
 import { LogoMark } from "@/components/Logo";
 import { toast } from "sonner";
@@ -49,13 +48,17 @@ const Auth = () => {
   };
 
   const google = async () => {
-    setBusy(true);
-    const res = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: `${window.location.origin}/dashboard`,
-    });
-    if (res.error) toast.error(res.error.message);
-    if (!res.redirected) setBusy(false);
-  };
+  setBusy(true);
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: { redirectTo: `${window.location.origin}/dashboard` },
+  });
+  if (error) {
+    toast.error(error.message);
+    setBusy(false);
+  }
+};
+
 
   return (
     <PageTransition>
