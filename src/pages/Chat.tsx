@@ -15,8 +15,8 @@ type Conv = { id: string; title: string; created_at: string };
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 
 const CHAT_MODELS = [
+ { id: "google/gemini-2.5-flash", label: "Gemini Flash", tag: "Fast" },
   { id: "google/gemini-2.5-pro",   label: "Gemini Pro",   tag: "Deep" },
-  { id: "google/gemini-2.5-flash", label: "Gemini Flash", tag: "Fast" },
   { id: "openai/gpt-5",            label: "GPT-5",        tag: "Premium" },
   { id: "openai/gpt-5-mini",       label: "GPT-5 Mini",   tag: "Quick" },
 ] as const;
