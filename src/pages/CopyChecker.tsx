@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { CheckedCopy, parseChecked } from "@/components/CheckedCopy";
+import { pdfToImages, isPdf } from "@/lib/pdfToImages";
 
 const papers = [
   "CA Foundation — Accounting", "CA Foundation — Business Laws", "CA Inter — Advanced Accounting",
@@ -64,7 +65,16 @@ const CopyChecker = () => {
     if (!qp || !ans || !paper) return toast.error("Upload the question paper, your answer copy and select a paper.");
     setBusy(true);
     try {
-      const enc = async (f: File) => ({ name: f.name, type: f.type, data: await toB64(f) });
+      const enc = async (f: File) => {
+  if (isPdf(f)) {
+    toast.info(`Converting PDF (${f.name}) to images...`);
+    const images = await pdfToImages(f);
+    const pages = images.map((img) => img.split(",")[1]);
+    return { name: f.name, type: "image/jpeg", pages };
+  }
+  return { name: f.name, type: f.type, data: await toB64(f) };
+};
+
       const { data, error } = await supabase.functions.invoke("copy-checker", {
         body: { paper, questionPaper: await enc(qp), answerCopy: await enc(ans) },
       });
