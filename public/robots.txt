@@ -1,14 +1,22 @@
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
 User-agent: *
 Allow: /
+
+# Login-walled app pages — not for indexing
+Disallow: /auth
+Disallow: /reset-password
+Disallow: /dashboard
+Disallow: /chat
+Disallow: /calendar
+Disallow: /notes
+Disallow: /syllabus
+Disallow: /inter-linkage
+Disallow: /survival-planner
+Disallow: /quiz
+Disallow: /ai-tools
+Disallow: /copy-checker
+Disallow: /papers
+Disallow: /lectures
+Disallow: /profile
+Disallow: /settings
+
+Sitemap: https://edueliteai.vercel.app/sitemap.xml
