@@ -71,7 +71,7 @@ Rules: do NOT use markdown hashtags or asterisks. Keep professional tone. Indian
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "google/gemini-3.8-flash",
         messages: [
           { role: "system", content: "You are a senior CA/CS/CMA faculty with 15+ years of teaching experience. Write crisp, exam-grade summaries." },
           { role: "user", content: prompt },

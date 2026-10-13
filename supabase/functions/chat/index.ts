@@ -36,8 +36,8 @@ Output rules (STRICT):
 
 const allowedModels = new Set([
   "google/gemini-2.5-pro",
-  "google/gemini-2.5-flash",
-  "google/gemini-2.5-flash-lite",
+  "google/gemini-3.8-flash",
+  "google/gemini-3.8-flash-lite",
   "openai/gpt-5",
   "openai/gpt-5-mini",
   "openai/gpt-5-nano",

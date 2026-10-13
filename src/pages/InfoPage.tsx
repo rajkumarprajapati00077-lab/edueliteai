@@ -34,9 +34,9 @@ const content = {
   },
   contact: {
     title: "Contact",
-    intro: "Need help with your account or want to report an incorrect study resource?",
+    intro: "Need help with your account or want to report an incorrect study resource? Reach out to us:",
     sections: [
-      ["Support requests", "Include the affected page, your course and a short description of what happened. Do not send passwords, recovery links, financial details or confidential client material."],
+      ["Email us", "axoflyr@proton.me — include the affected page, your course and a short description of what happened. Do not send passwords, recovery links, financial details or confidential client material."],
       ["Official exam matters", "For registration, examination notices, results and syllabus changes, contact your institute directly through its official website. EduElite cannot change an institute's records or examination decisions."],
     ],
   },
@@ -56,6 +56,7 @@ export default function InfoPage() {
         {info.sections.map(([heading, text]) => <section key={heading} className="py-7"><h2 className="font-display text-2xl">{heading}</h2><p className="mt-3 leading-7 text-muted-foreground">{text}</p></section>)}
       </div>
       {page === "contact" && <div className="mt-8 flex flex-wrap gap-4 text-sm text-primary">
+        <a className="inline-flex min-h-11 items-center gap-2 font-semibold" href="mailto:axoflyr@proton.me">axoflyr@proton.me <ExternalLink className="h-4 w-4" /></a>
         <a className="inline-flex min-h-11 items-center gap-2" href="https://www.icai.org/" target="_blank" rel="noreferrer">ICAI <ExternalLink className="h-4 w-4" /></a>
         <a className="inline-flex min-h-11 items-center gap-2" href="https://www.icsi.edu/" target="_blank" rel="noreferrer">ICSI <ExternalLink className="h-4 w-4" /></a>
         <a className="inline-flex min-h-11 items-center gap-2" href="https://icmai.in/" target="_blank" rel="noreferrer">ICMAI <ExternalLink className="h-4 w-4" /></a>
