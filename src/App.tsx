@@ -27,9 +27,9 @@ const Quiz = lazy(() => import("./pages/Quiz.tsx"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword.tsx"));
 const AIToolsHub = lazy(() => import("./pages/AIToolsHub.tsx"));
 const InfoPage = lazy(() => import("./pages/InfoPage.tsx"));
-const CopyChecker = lazy(() => import("./pages/CopyChecker.tsx")
+const CopyChecker = lazy(() => import("./pages/CopyChecker.tsx"));
 const Papers = lazy(() => import("./pages/Papers.tsx"));
-const Lectures = lazy(() => import("./pages/Lectures.tsx")););
+const Lectures = lazy(() => import("./pages/Lectures.tsx"));
 const Pro = lazy(() => import("./pages/Pro.tsx"));
 
 const queryClient = new QueryClient();
