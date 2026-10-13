@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PlayCircle, ExternalLink, LockKeyhole, Youtube, Globe, Smartphone } from "lucide-react";
+import { PlayCircle, ExternalLink, LockKeyhole, Youtube, Globe, Smartphone, Send } from "lucide-react";
 import { Link } from "react-router-dom";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { MobileNav } from "@/components/MobileNav";
@@ -11,6 +11,7 @@ const TYPE_ICONS = {
   youtube: Youtube,
   portal: Globe,
   app: Smartphone,
+  telegram: Send,
 };
 
 const Lectures = () => {
@@ -91,12 +92,12 @@ const Lectures = () => {
                 <div className="mt-3 rounded-xl border border-primary/30 bg-gradient-to-br from-primary/10 to-primary/5 p-6 text-center">
                   <LockKeyhole className="mx-auto h-10 w-10 text-primary" />
                   <h3 className="mt-3 text-xl font-bold">
-                    PW Batches, Revision Marathons & More — Sab Ek Jagah
+                    Telegram Channels + PW Lectures — Sab Ek Jagah
                   </h3>
                   <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
-                    Handpicked lecture playlists, one-shot revisions, and amendment updates 
-                    from top educators — curated for your course & attempt. No more 
-                    searching YouTube for hours.
+                    Hamare exclusive Telegram channels (CA Inter & Foundation material) 
+                    aur PW ke best lectures — sirf Pro members ke liye. Payment ke baad 
+                    turant access milega.
                   </p>
                   <div className="mt-4 flex flex-wrap justify-center gap-2 text-xs">
                     <span className="rounded-full bg-background px-3 py-1">✅ Curated playlists</span>

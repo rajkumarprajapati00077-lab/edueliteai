@@ -10,68 +10,42 @@ export interface LectureSource {
   name: string;
   description: string;
   url: string;
-  type: "youtube" | "portal" | "app";
+  type: "youtube" | "portal" | "app" | "telegram";
   courses: string[]; // e.g. ["CA Foundation", "CA Inter"]
   language: string;
   isPro?: boolean; // true = locked behind Pro
 }
 
 export const LECTURE_SOURCES: LectureSource[] = [
+  // ── Free: official PW YouTube lectures ──
   {
-    id: "icai-official",
-    name: "ICAI Official YouTube",
-    description: "ICAI's own channel — lectures, revision sessions, exam guidance from official faculty.",
-    url: "https://www.youtube.com/@icaiorg",
-    type: "youtube",
-    courses: ["CA Foundation", "CA Inter", "CA Final"],
-    language: "English / Hindi",
-  },
-  {
-    id: "icai-bos",
-    name: "ICAI BOS Knowledge Portal",
-    description: "Board of Studies portal — free study material, video lectures, and updates.",
-    url: "https://boslive.icai.org",
-    type: "portal",
-    courses: ["CA Foundation", "CA Inter", "CA Final"],
-    language: "English / Hindi",
-  },
-  {
-    id: "icai-mcq-portal",
-    name: "ICAI MCQ Practice Portal",
-    description: "Official MCQ practice platform for self-assessment within stipulated time.",
-    url: "https://boslive.icai.org",
-    type: "portal",
-    courses: ["CA Foundation", "CA Inter", "CA Final"],
-    language: "English",
-  },
-  // ── Pro-locked: curated free lecture playlists ──
-  {
-    id: "pw-ca-free",
-    name: "PW CA — Free YouTube Lectures",
-    description: "PhysicsWallah's official free CA lectures on YouTube — concepts, revisions & exam tips.",
-    url: "https://www.youtube.com/results?search_query=pw+ca+free+lectures",
+    id: "pw-ca-youtube",
+    name: "PW CA — Official YouTube",
+    description: "PhysicsWallah's official free CA lectures — concepts, revisions & exam tips.",
+    url: "https://www.youtube.com/results?search_query=pw+ca+official",
     type: "youtube",
     courses: ["CA Foundation", "CA Inter"],
     language: "Hindi / English",
-    isPro: true,
   },
+  // ── Pro: apne Telegram channels yahan add karo ──
+  // EXAMPLE - apne asli channel link se replace karo:
   {
-    id: "revision-marathons",
-    name: "Revision Marathon Playlists",
-    description: "Curated one-shot revision marathons for every subject — perfect for last-month prep.",
-    url: "https://www.youtube.com/results?search_query=ca+revision+marathon+one+shot",
-    type: "youtube",
-    courses: ["CA Foundation", "CA Inter", "CA Final"],
+    id: "tg-inter-material",
+    name: "CA Inter Material — Telegram",
+    description: "Complete CA Inter lectures & notes on our Telegram channel. Pro members only.",
+    url: "https://t.me/+4T4SFxPvHZQ3NWVl",
+    type: "telegram",
+    courses: ["CA Inter"],
     language: "Hindi / English",
     isPro: true,
   },
   {
-    id: "amendment-updates",
-    name: "Amendment Update Lectures",
-    description: "Latest amendments explained — stay updated for your attempt.",
-    url: "https://www.youtube.com/results?search_query=ca+amendment+lectures+2026",
-    type: "youtube",
-    courses: ["CA Inter", "CA Final"],
+    id: "tg-foundation-material",
+    name: "CA Foundation Material — Telegram",
+    description: "Complete CA Foundation lectures & notes on our Telegram channel. Pro members only.",
+    url: "https://t.me/Z_Vertex_01",
+    type: "telegram",
+    courses: ["CA Foundation"],
     language: "Hindi / English",
     isPro: true,
   },
