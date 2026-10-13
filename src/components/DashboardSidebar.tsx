@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, MessageSquareCode, CalendarDays, User as UserIcon, Settings, FileText, Library, Network, Timer, Music as MusicIcon, Brain, Sparkles, FileCheck2 } from "lucide-react";
+import { LayoutDashboard, MessageSquareCode, CalendarDays, User as UserIcon, Settings, FileText, Library, Network, Timer, Music as MusicIcon, Brain, Sparkles, FileCheck2,ScrollText, PlayCircle } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { useStreak } from "@/hooks/useStreak";
 
@@ -13,6 +13,9 @@ const items = [
   { to: "/inter-linkage", icon: Network, label: "Inter-Linkage" },
   { to: "/survival-planner", icon: Timer, label: "Survival Planner" },
   { to: "/quiz", icon: Brain, label: "Quizzes" },
+  { to: "/papers", icon: ScrollText, label: "RTP · MTP · PYQ" },
+{ to: "/lectures", icon: PlayCircle, label: "Free Lectures" },
+
   { to: "/copy-checker", icon: FileCheck2, label: "Copy Checker" },
   { to: "/pro", icon: MusicIcon, label: "Focus Music · Pro" },
   { to: "/profile", icon: UserIcon, label: "Profile" },
