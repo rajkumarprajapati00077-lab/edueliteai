@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, MessageSquareCode, CalendarDays, User as UserIcon, Settings, FileText, Library, Network, Timer, Music as MusicIcon, Brain, Sparkles, FileCheck2,ScrollText, PlayCircle } from "lucide-react";
+import { LayoutDashboard, MessageSquareCode, CalendarDays, User as UserIcon, Settings, FileText, Library, Network, Timer, Music as MusicIcon, Brain, Sparkles, FileCheck2, ScrollText, PlayCircle } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { useStreak } from "@/hooks/useStreak";
 
@@ -14,8 +14,7 @@ const items = [
   { to: "/survival-planner", icon: Timer, label: "Survival Planner" },
   { to: "/quiz", icon: Brain, label: "Quizzes" },
   { to: "/papers", icon: ScrollText, label: "RTP · MTP · PYQ" },
-{ to: "/lectures", icon: PlayCircle, label: "Free Lectures" },
-
+  { to: "/lectures", icon: PlayCircle, label: "Free Lectures" },
   { to: "/copy-checker", icon: FileCheck2, label: "Copy Checker" },
   { to: "/pro", icon: MusicIcon, label: "Focus Music · Pro" },
   { to: "/profile", icon: UserIcon, label: "Profile" },
@@ -26,13 +25,13 @@ export const DashboardSidebar = () => {
   const { pathname } = useLocation();
   const streak = useStreak();
   return (
-    <aside className="hidden lg:flex w-64 shrink-0 flex-col glass-strong border-r border-border/40 px-4 py-6">
-      <div className="px-2 mb-8">
+    <aside className="hidden lg:flex w-64 shrink-0 flex-col glass-strong border-r border-border/40 px-4 py-6 h-screen sticky top-0 overflow-hidden">
+      <div className="px-2 mb-8 shrink-0">
         <Logo />
       </div>
 
-      <div className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground px-2 mb-2">Workspace</div>
-      <nav className="flex flex-col gap-1">
+      <div className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground px-2 mb-2 shrink-0">Workspace</div>
+      <nav className="flex flex-col gap-1 overflow-y-auto min-h-0 flex-1 pr-1">
         {items.map((it) => {
           const active = pathname === it.to;
           return (
@@ -52,7 +51,7 @@ export const DashboardSidebar = () => {
         })}
       </nav>
 
-      <div className="mt-auto">
+      <div className="mt-auto shrink-0 pt-4">
         <div className="rounded-xl glass p-4 shadow-3d">
           <p className="text-xs text-muted-foreground">Streak</p>
           <p className="font-display text-2xl font-bold text-gradient">{streak} day{streak === 1 ? "" : "s"} 🔥</p>
