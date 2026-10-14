@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import logoSymbol from "@/assets/eduelite-logo-concept-a.png";
+import logoSymbol from "@/assets/eduelite-logo-concept-a.webp";
 
 /** EduElite's open-book E: learning, progress, and achievement in one symbol. */
 export const LogoMark = ({ size = 36, className = "" }: { size?: number; className?: string }) => (

@@ -7,11 +7,11 @@ import { FloatingProfileButton } from "@/components/FloatingProfileButton";
 import { PrivacyNotice } from "@/components/PrivacyNotice";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import studentImage from "@/assets/home-study.jpg";
-import icaiLogo from "@/assets/authorities/icai.png";
-import icsiLogo from "@/assets/authorities/icsi.png";
-import icmaiLogo from "@/assets/authorities/icmai.jpg";
-import corporateSketch from "@/assets/corporate-world-sketch.jpg";
+import studentImage from "@/assets/home-study.webp";
+import icaiLogo from "@/assets/authorities/icai.webp";
+import icsiLogo from "@/assets/authorities/icsi.webp";
+import icmaiLogo from "@/assets/authorities/icmai.webp";
+import corporateSketch from "@/assets/corporate-world-sketch.webp";
 import { SketchMotion } from "@/components/SketchMotion";
 
 const institutes = [
@@ -89,7 +89,8 @@ const Landing = () => {
               <div className="institute-track flex gap-3">
                 {[...institutes, ...institutes].map((institute, index) => (
                   <a key={`${institute.name}-${index}`} href={institute.href} target="_blank" rel="noreferrer" aria-label={`${institute.course} course reference — ${institute.name} official website`} tabIndex={index >= institutes.length ? -1 : undefined} aria-hidden={index >= institutes.length ? true : undefined} className="glass flex w-64 shrink-0 items-center gap-4 rounded-xl px-5 py-3 transition-colors hover:bg-card">
-                    <span className="institute-logo flex h-12 w-12 shrink-0 items-center justify-center rounded-xl p-1.5 shadow-3d"><img src={institute.logo} alt="" loading="lazy" className="max-h-full max-w-full object-contain" /></span>
+                    <span className="institute-logo flex h-12 w-12 shrink-0 items-center justify-center rounded-xl p-1.5 shadow-3d"><img src={institute.logo} alt="" loading="lazy" width={48} height={48}
+ className="max-h-full max-w-full object-contain" /></span>
                     <span><strong className="block text-sm">{institute.course}</strong><span className="text-xs text-muted-foreground">{institute.name}</span></span>
                   </a>
                 ))}
